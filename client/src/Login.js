@@ -6,7 +6,7 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState("");
 
   const login = () => {
-    fetch("http://localhost:3001/login", {
+    fetch("https://calendar-app-u3s5.onrender.com/events", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

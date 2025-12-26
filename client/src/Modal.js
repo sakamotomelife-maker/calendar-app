@@ -32,7 +32,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       },
     };
 
-    fetch("http://localhost:3001/events", {
+    fetch("https://calendar-app-u3s5.onrender.com/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newEvents),
@@ -46,7 +46,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     const newEvents = { ...events };
     delete newEvents[date];
 
-    fetch("http://localhost:3001/events", {
+    fetch("https://calendar-app-u3s5.onrender.com/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newEvents),

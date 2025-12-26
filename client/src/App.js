@@ -8,7 +8,7 @@ function App() {
 
   // 起動時にログイン状態チェック
   useEffect(() => {
-    fetch("http://localhost:3001/events", {
+    fetch("https://calendar-app-u3s5.onrender.com/events", {
       credentials: "include",
     })
       .then((res) => {
@@ -16,7 +16,7 @@ function App() {
           setLoggedIn(true);
 
           // ログイン中ユーザー情報を取得
-          fetch("http://localhost:3001/me", {
+          fetch("https://calendar-app-u3s5.onrender.com/events", {
             credentials: "include",
           })
             .then((r) => r.json())
