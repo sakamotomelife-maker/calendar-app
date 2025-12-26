@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "yuki@example.com",
+      "password": "$2b$10$at7M40EglT03/FbfeVi6lOBaMCde5OIQq6fDprVMgJSNgNzefOI9G"
+    }
+  ],
+  "events": {
+    "1": {}
+  }
+}
