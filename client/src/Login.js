@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberEmail, setRememberEmail] = useState(true); // デフォルトON
+  const [rememberEmail, setRememberEmail] = useState(true);
   const [error, setError] = useState("");
 
-  // -------------------------
-  // 初回ロード時：保存されたメールアドレスを読み込む
-  // -------------------------
+  // 保存されたメールアドレスを読み込む
   useEffect(() => {
     const savedEmail = localStorage.getItem("savedEmail");
     if (savedEmail) {
@@ -17,36 +21,28 @@ export default function Login({ onLogin }) {
     }
   }, []);
 
-  // -------------------------
-  // ログイン処理
-  // -------------------------
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    fetch("https://calendar-app-8kqm.onrender.com/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("ログインに失敗しました");
-        return res.json();
-      })
-      .then(() => {
-        // メールアドレス保存
-        if (rememberEmail) {
-          localStorage.setItem("savedEmail", email);
-        } else {
-          localStorage.removeItem("savedEmail");
-        }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-        onLogin(); // App.js に通知
-      })
-      .catch(() => {
-        setError("メールアドレスまたはパスワードが違います");
-      });
+    if (error) {
+      setError("メールアドレスまたはパスワードが違います");
+      return;
+    }
+
+    // メールアドレス保存
+    if (rememberEmail) {
+      localStorage.setItem("savedEmail", email);
+    } else {
+      localStorage.removeItem("savedEmail");
+    }
+
+    onLogin();
   };
 
   return (
@@ -78,7 +74,6 @@ export default function Login({ onLogin }) {
           />
         </div>
 
-        {/* メールアドレス保存チェック */}
         <div style={{ marginBottom: 10 }}>
           <label>
             <input

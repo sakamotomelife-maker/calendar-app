@@ -1,51 +1,49 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 import Modal from "./Modal";
 import "./Calendar.css";
 
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
+
 export default function Calendar({ userEmail, onLogout }) {
-  // 今日の年月を初期値にする
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth()); // 0 = 1月
+  const [month, setMonth] = useState(today.getMonth());
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState({});
   const [holidays, setHolidays] = useState({});
 
-  // 共通メモ
   const [commonMemo, setCommonMemo] = useState("");
   const [memoSaved, setMemoSaved] = useState(false);
 
-  // 月曜始まりの曜日
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
 
-  // カレンダーの日付を生成（月曜開始）
+  // -------------------------
+  // カレンダー生成（月曜始まり）
+  // -------------------------
   function getCalendarDays(year, month) {
     const firstDay = new Date(year, month, 1);
     const lastDate = new Date(year, month + 1, 0).getDate();
 
-    // JSは日曜=0 → 月曜=1 に変換
     let start = firstDay.getDay();
     start = start === 0 ? 6 : start - 1;
 
     const days = [];
-
-    // 空白セル
-    for (let i = 0; i < start; i++) {
-      days.push(null);
-    }
-
-    // 日付
-    for (let d = 1; d <= lastDate; d++) {
-      days.push(d);
-    }
+    for (let i = 0; i < start; i++) days.push(null);
+    for (let d = 1; d <= lastDate; d++) days.push(d);
 
     return days;
   }
 
   const days = getCalendarDays(year, month);
 
-  // 前月・次月へ移動
+  // -------------------------
+  // 月移動
+  // -------------------------
   function changeMonth(offset) {
     let newMonth = month + offset;
     let newYear = year;
@@ -62,47 +60,94 @@ export default function Calendar({ userEmail, onLogout }) {
     setYear(newYear);
   }
 
-  // 初回ロード時にサーバーから予定取得（認証必須）
+  // -------------------------
+  // Supabase：予定取得
+  // -------------------------
   useEffect(() => {
-    fetch("https://calendar-app-8kqm.onrender.com/events", {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => setEvents(data));
+    const loadEvents = async () => {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("events")
+        .select("*")
+        .eq("user_id", user.id);
+
+      const obj = {};
+      data?.forEach((ev) => {
+        obj[ev.date] = {
+          preset: ev.preset,
+          note: ev.note,
+          color: ev.color,
+        };
+      });
+
+      setEvents(obj);
+    };
+
+    loadEvents();
   }, []);
 
-  // 共通メモ取得
+  // -------------------------
+  // Supabase：共通メモ取得
+  // -------------------------
   useEffect(() => {
-    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => setCommonMemo(data.memo || ""));
+    const loadMemo = async () => {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("common_memo")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      setCommonMemo(data?.memo || "");
+    };
+
+    loadMemo();
   }, []);
 
-  const saveCommonMemo = () => {
-    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ memo: commonMemo }),
-    }).then(() => {
-      setMemoSaved(true);
-      setTimeout(() => setMemoSaved(false), 1500);
-    });
+  // -------------------------
+  // 共通メモ保存
+  // -------------------------
+  const saveCommonMemo = async () => {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    const { data: existing } = await supabase
+      .from("common_memo")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("common_memo")
+        .update({ memo: commonMemo })
+        .eq("user_id", user.id);
+    } else {
+      await supabase.from("common_memo").insert({
+        user_id: user.id,
+        memo: commonMemo,
+      });
+    }
+
+    setMemoSaved(true);
+    setTimeout(() => setMemoSaved(false), 1500);
   };
 
-  const deleteCommonMemo = () => {
+  const deleteCommonMemo = async () => {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    await supabase.from("common_memo").delete().eq("user_id", user.id);
     setCommonMemo("");
-    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ memo: "" }),
-    });
   };
 
-  // 祝日を取得
+  // -------------------------
+  // 祝日取得
+  // -------------------------
   useEffect(() => {
     fetch("https://holidays-jp.github.io/api/v1/date.json")
       .then((res) => res.json())
@@ -110,58 +155,52 @@ export default function Calendar({ userEmail, onLogout }) {
       .catch(() => setHolidays({}));
   }, []);
 
+  // -------------------------
+  // UI
+  // -------------------------
   return (
     <div style={{ padding: 20 }}>
-      {/* 右上：ユーザー名＋ログアウト */}
+      {/* 上部バー */}
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
         <button className="logout-btn" onClick={onLogout}>ログアウト</button>
       </div>
 
-      {/* 年月ヘッダー */}
+      {/* 年月 */}
       <div className="calendar-header">
         <button onClick={() => changeMonth(-1)}>←</button>
 
         <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
           {Array.from({ length: 20 }, (_, i) => today.getFullYear() - 10 + i).map(
             (y) => (
-              <option key={y} value={y}>
-                {y}年
-              </option>
+              <option key={y} value={y}>{y}年</option>
             )
           )}
         </select>
 
         <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
-            <option key={i} value={i}>
-              {i + 1}月
-            </option>
+            <option key={i} value={i}>{i + 1}月</option>
           ))}
         </select>
 
         <button onClick={() => changeMonth(1)}>→</button>
       </div>
 
-      {/* 曜日行 */}
+      {/* 曜日 */}
       <div className="weekday-row">
         {weekdays.map((w) => (
-          <div key={w} className="weekday-cell">
-            {w}
-          </div>
+          <div key={w} className="weekday-cell">{w}</div>
         ))}
       </div>
 
-      {/* カレンダー本体 */}
+      {/* カレンダー */}
       <div className="calendar">
         {days.map((day, index) => {
           const weekdayIndex = index % 7;
 
           if (day === null) {
-            let emptyClass = "cell empty";
-            if (weekdayIndex === 5) emptyClass += " saturday";
-            if (weekdayIndex === 6) emptyClass += " sunday";
-            return <div key={index} className={emptyClass}></div>;
+            return <div key={index} className="cell empty"></div>;
           }
 
           const dateStr = `${year}-${String(month + 1).padStart(
@@ -209,7 +248,7 @@ export default function Calendar({ userEmail, onLogout }) {
         })}
       </div>
 
-      {/* 共通メモ欄 */}
+      {/* 共通メモ */}
       <div className="common-memo-box">
         <h3>共通メモ</h3>
         <textarea

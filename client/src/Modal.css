@@ -1,12 +1,54 @@
-/* プリセットボタン（早出・遅出・公休） */
+/* ================================
+   モーダル背景
+================================ */
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* ================================
+   モーダル本体
+================================ */
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;
+  box-sizing: border-box;
+  position: relative;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ================================
+   プリセットボタン
+================================ */
+.btn-group {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
 .preset-btn {
-  padding: 10px 18px;          /* ← 大きめに */
-  font-size: 16px;             /* ← 文字も少し大きく */
+  padding: 10px 18px;
+  font-size: 16px;
   border-radius: 6px;
   border: 1px solid #888;
   background: #f0f0f0;
   cursor: pointer;
-  margin-right: 6px;
+  flex: 1;
 }
 
 .preset-btn.active {
@@ -20,105 +62,58 @@
   cursor: not-allowed;
 }
 
-
-.modal-bg {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal {
-  background: white;
-  padding: 20px;
-  width: 300px;
-  border-radius: 8px;
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.danger {
-  background: #ff6666;
-  color: white;
-  margin-top: 10px;
-}
-
-textarea {
-  width: 95%;
-  height: 70px; /* 3行分 */
-  font-size: 14px;
+/* ================================
+   テキストエリア
+================================ */
+.text-area-wrapper textarea {
+  width: 100%;
+  height: 60px;
+  resize: vertical;
   padding: 6px;
-}
-
-.preset-btn:disabled {
-  background: #ddd;
-  color: #888;
-  cursor: not-allowed;
-}
-
-/* フッター（右下） */
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center; 
-  margin-top: 15px;
-  gap: 8px;
-}
-
-.save-btn {
-  margin-right: 8px; /* 半角スペースくらいの間隔 */
-}
-
-.delete-btn {
-  margin: 0;
-  padding: 0 16px;
-}
-
-.save-btn,
-.delete-btn {
-  height: 36px;        /* 高さを完全固定 */
-  line-height: 36px;   /* テキストを上下中央に */
-  padding: 0 16px;     /* 横幅だけ調整 */
   font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
 }
 
-
-/* 左下の色ボタン */
+/* ================================
+   背景色ボタン
+================================ */
 .color-buttons {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 .color-btn {
-  width: 28px;
-  height: 28px;
-  border: 2px solid #aaa;
-  cursor: pointer;
+  width: 26px;
+  height: 26px;
   border-radius: 4px;
+  border: 1px solid #888;
+  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 .color-btn.selected {
-  border: 3px solid #000;
+  outline: 2px solid #0288d1;
 }
 
-.btn-group {
-  margin-bottom: 6px; /* ← 0.5行分くらいの余白 */
+/* ================================
+   削除ボタン
+================================ */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.delete-btn {
+  padding: 8px 14px;
+  background: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 

@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 import "./Modal.css";
+
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
 
 export default function Modal({ date, events, setEvents, holidays, onClose }) {
   const current = events[date] || { preset: "", note: "", color: "" };
@@ -22,17 +28,40 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   // -------------------------
-  // サーバーへ保存（閉じない）
+  // Supabase 保存処理
   // -------------------------
-  const saveOnly = (newEvents) => {
-    fetch("https://calendar-app-8kqm.onrender.com/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(newEvents),
-    }).then(() => {
-      setEvents(newEvents);
-    });
+  const saveToSupabase = async (newEvents) => {
+    setEvents(newEvents);
+
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    const payload = {
+      user_id: user.id,
+      date,
+      preset,
+      note: text,
+      color,
+    };
+
+    // 既存データがあるか確認
+    const { data: existing } = await supabase
+      .from("events")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("date", date)
+      .maybeSingle();
+
+    if (existing) {
+      // UPDATE
+      await supabase
+        .from("events")
+        .update(payload)
+        .eq("id", existing.id);
+    } else {
+      // INSERT
+      await supabase.from("events").insert(payload);
+    }
   };
 
   // -------------------------
@@ -43,25 +72,29 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       ...events,
       [date]: { preset, note: text, color },
     };
-    saveOnly(newEvents);
+    saveToSupabase(newEvents);
   }, [preset, text, color]);
 
   // -------------------------
   // 削除処理
   // -------------------------
-  const remove = () => {
+  const remove = async () => {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    // Supabase から削除
+    await supabase
+      .from("events")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("date", date);
+
+    // React state から削除
     const newEvents = { ...events };
     delete newEvents[date];
+    setEvents(newEvents);
 
-    fetch("https://calendar-app-8kqm.onrender.com/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(newEvents),
-    }).then(() => {
-      setEvents(newEvents);
-      onClose();
-    });
+    onClose();
   };
 
   return (

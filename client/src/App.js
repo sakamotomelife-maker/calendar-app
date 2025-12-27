@@ -1,66 +1,74 @@
-import { useState, useEffect } from "react";
-import Calendar from "./Calendar";
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import Login from "./Login";
+import Calendar from "./Calendar";
 
-function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
 
-  // 起動時にログイン状態チェック
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // -------------------------
+  // 初回ロード：ログイン状態を確認
+  // -------------------------
   useEffect(() => {
-    fetch("https://calendar-app-8kqm.onrender.com/events", {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          setLoggedIn(true);
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user || null);
+      setLoading(false);
+    };
 
-          // ログイン中ユーザー情報を取得
-          fetch("https://calendar-app-8kqm.onrender.com/me", {
-            credentials: "include",
-          })
-            .then((r) => r.json())
-            .then((data) => setUserEmail(data.email));
-        } else {
-          setLoggedIn(false);
-        }
-      })
-      .catch(() => setLoggedIn(false));
+    checkSession();
+
+    // ログイン状態の変化を監視
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  // ログアウト処理
-  const logout = () => {
-    fetch("https://calendar-app-8kqm.onrender.com/logout", {
-      method: "POST",
-      credentials: "include",
-    }).then(() => {
-      setLoggedIn(false);
-      setUserEmail("");
-    });
+  // -------------------------
+  // ログアウト
+  // -------------------------
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
   };
 
-  // ログイン成功時
-  const handleLogin = () => {
-    setLoggedIn(true);
-
-    // ログイン直後にユーザー情報取得
-    fetch("https://calendar-app-8kqm.onrender.com/me", {
-      credentials: "include",
-    })
-      .then((r) => r.json())
-      .then((data) => setUserEmail(data.email));
+  // -------------------------
+  // Login.js からのログイン通知
+  // -------------------------
+  const handleLogin = async () => {
+    const { data } = await supabase.auth.getUser();
+    setUser(data.user || null);
   };
 
-  if (!loggedIn) {
-    return <Login onLogin={handleLogin} />;
+  if (loading) {
+    return <div style={{ padding: 20 }}>読み込み中...</div>;
   }
 
   return (
     <div>
-      <Calendar userEmail={userEmail} onLogout={logout} />
+      {/* 未ログイン → Login */}
+      {!user && <Login onLogin={handleLogin} />}
+
+      {/* ログイン済み → Calendar */}
+      {user && (
+        <Calendar
+          userEmail={user.email}
+          onLogout={handleLogout}
+        />
+      )}
     </div>
   );
 }
-
-export default App;
 
