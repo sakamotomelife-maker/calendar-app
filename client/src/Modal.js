@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Modal.css";
 
 export default function Modal({ date, events, setEvents, holidays, onClose }) {
@@ -22,18 +22,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   // -------------------------
-  // 保存処理
+  // サーバーへ保存（閉じない）
   // -------------------------
-  const save = () => {
-    const newEvents = {
-      ...events,
-      [date]: {
-        preset,
-        note: text,
-        color,
-      },
-    };
-
+  const saveOnly = (newEvents) => {
     fetch("https://calendar-app-8kqm.onrender.com/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -41,8 +32,25 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       body: JSON.stringify(newEvents),
     }).then(() => {
       setEvents(newEvents);
-      onClose();
     });
+  };
+
+  // -------------------------
+  // 自動保存（preset / text / color が変わるたびに保存）
+  // -------------------------
+  useEffect(() => {
+    const newEvents = {
+      ...events,
+      [date]: { preset, note: text, color },
+    };
+    saveOnly(newEvents);
+  }, [preset, text, color]);
+
+  // -------------------------
+  // 「登録」ボタンは閉じるだけ
+  // -------------------------
+  const save = () => {
+    onClose();
   };
 
   // -------------------------
@@ -125,7 +133,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
 
         {/* 登録・削除 */}
         <div className="modal-footer">
-          <button className="save-btn" onClick={save}>登録</button>
+          <button className="save-btn" onClick={save}>閉じる</button>
           <button className="danger delete-btn" onClick={remove}>削除</button>
         </div>
       </div>

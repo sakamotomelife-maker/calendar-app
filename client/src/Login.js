@@ -1,15 +1,18 @@
 import { useState } from "react";
+import "./Login.css";
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState("yuki@example.com");
-  const [password, setPassword] = useState("yuki1234");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");        // ← 初期値を空に
+  const [password, setPassword] = useState("");  // ← 初期値を空に
+  const [remember, setRemember] = useState(false); // ← チェックボックス
 
-  const login = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     fetch("https://calendar-app-8kqm.onrender.com/login", {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ email, password }),
     })
       .then((res) => {
@@ -17,37 +20,48 @@ export default function Login({ onLogin }) {
         return res.json();
       })
       .then(() => {
-        onLogin(); // 成功したときだけログイン扱い
+        // remember が true のときだけ localStorage に保存
+        if (remember) {
+          localStorage.setItem("savedEmail", email);
+        } else {
+          localStorage.removeItem("savedEmail");
+        }
+        onLogin();
       })
-      .catch(() => {
-        setError("メールまたはパスワードが違います");
-      });
+      .catch(() => alert("メールアドレスまたはパスワードが違います"));
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>ログイン</h2>
+    <div className="login-container">
+      <h1 className="title">MyCalendar</h1>
+      <div className="subtitle">- created by Sakamoto -</div>
 
-      <div>
+      <form className="login-box" onSubmit={handleSubmit}>
+        <label>メールアドレス</label>
         <input
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="メール"
         />
-      </div>
 
-      <div>
+        <label>パスワード</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="パスワード"
         />
-      </div>
 
-      <button onClick={login}>ログイン</button>
+        <div className="remember-row">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          <span>このデバイスでログイン情報を保持</span>
+        </div>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
+        <button type="submit" className="login-btn">ログイン</button>
+      </form>
     </div>
   );
 }

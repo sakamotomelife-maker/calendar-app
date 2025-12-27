@@ -30,8 +30,8 @@
 .cell > div:first-child {
   margin: 0;
   padding: 0;
-  font-size: 13px;                /* ← 小さめに調整 */
-  font-weight: bold;
+  font-size: 12px;                /* ← 小さめに調整 */
+  font-weight: nomal;
   line-height: 1.1;
 }
 
@@ -67,6 +67,22 @@
   word-break: break-word;         /* ← 長文でも崩れない */
   margin-top: 2px;
 }
+
+
+.calendar-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.user-email {
+  font-size: 12px; /* ← ログアウトの 2/3 サイズ */
+  color: #555;
+}
+
+
 
 /* 年月プルダウン */
 .calendar-header {
@@ -121,5 +137,46 @@
   color: #d32f2f;
   margin-top: 2px;
   white-space: nowrap;
+}
+
+.common-memo-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e3f7ff;
+  border: 1px solid #b5d9e8;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.common-memo-box h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.common-memo-textarea {
+  width: 100%;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  resize: vertical; /* ← 自動で広がる */
+  min-height: 60px;
+}
+
+.common-memo-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.common-memo-buttons button {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.common-memo-buttons .danger {
+  background: #ff5252;
+  color: white;
 }
 

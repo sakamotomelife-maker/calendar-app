@@ -36,6 +36,30 @@ function saveDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
+
+// 共通メモ取得
+app.get("/common-memo", authMiddleware, (req, res) => {
+  const db = loadDB();
+  const memo = db.commonMemo?.[req.userId] || "";
+  res.json({ memo });
+});
+
+// 共通メモ保存
+app.post("/common-memo", authMiddleware, (req, res) => {
+  const db = loadDB();
+  if (!db.commonMemo) db.commonMemo = {};
+  db.commonMemo[req.userId] = req.body.memo || "";
+  saveDB(db);
+  res.json({ success: true });
+});
+
+
+
+
+
+
+
+
 // ----------------------
 // 初期ユーザー
 // ----------------------

@@ -12,6 +12,9 @@ export default function Calendar({ userEmail, onLogout }) {
   const [events, setEvents] = useState({});
   const [holidays, setHolidays] = useState({});
 
+  // 共通メモ
+  const [commonMemo, setCommonMemo] = useState("");
+
   // 月曜始まりの曜日
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
 
@@ -67,6 +70,34 @@ export default function Calendar({ userEmail, onLogout }) {
       .then((data) => setEvents(data));
   }, []);
 
+  // 共通メモ取得
+  useEffect(() => {
+    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => setCommonMemo(data.memo || ""));
+  }, []);
+
+  const saveCommonMemo = () => {
+    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ memo: commonMemo }),
+    });
+  };
+
+  const deleteCommonMemo = () => {
+    setCommonMemo("");
+    fetch("https://calendar-app-8kqm.onrender.com/common-memo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ memo: "" }),
+    });
+  };
+
   // 祝日を取得
   useEffect(() => {
     fetch("https://holidays-jp.github.io/api/v1/date.json")
@@ -78,9 +109,9 @@ export default function Calendar({ userEmail, onLogout }) {
   return (
     <div style={{ padding: 20 }}>
       {/* 右上：ユーザー名＋ログアウト */}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
-        <span style={{ marginRight: 10 }}>{userEmail}</span>
-        <button onClick={onLogout}>ログアウト</button>
+      <div className="calendar-top-bar">
+        <span className="user-email">{userEmail}</span>
+        <button className="logout-btn" onClick={onLogout}>ログアウト</button>
       </div>
 
       {/* 年月ヘッダー */}
@@ -150,7 +181,7 @@ export default function Calendar({ userEmail, onLogout }) {
               style={{ background: bgColor }}
               onClick={() => setSelectedDate(dateStr)}
             >
-              <div>{day}</div>
+              <div className="calendar-day-number">{day}</div>
 
               {holidayName && (
                 <div className="event preset-公休">
@@ -172,6 +203,21 @@ export default function Calendar({ userEmail, onLogout }) {
             </div>
           );
         })}
+      </div>
+
+      {/* 共通メモ欄 */}
+      <div className="common-memo-box">
+        <h3>共通メモ</h3>
+        <textarea
+          className="common-memo-textarea"
+          value={commonMemo}
+          onChange={(e) => setCommonMemo(e.target.value)}
+          rows={3}
+        />
+        <div className="common-memo-buttons">
+          <button onClick={saveCommonMemo}>保存</button>
+          <button className="danger" onClick={deleteCommonMemo}>削除</button>
+        </div>
       </div>
 
       {/* モーダル */}
