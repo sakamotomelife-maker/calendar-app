@@ -17,49 +17,45 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     setPreset((prev) => (prev === value ? "" : value));
   };
 
-  // 背景色ボタンの ON/OFF
   const toggleColor = (value) => {
     setColor((prev) => (prev === value ? "" : value));
   };
 
   const save = () => {
-  const newEvents = {
-    ...events,
-    [date]: {
-      preset,
-      note: text,
-      color,
-    },
+    const newEvents = {
+      ...events,
+      [date]: {
+        preset,
+        note: text,
+        color,
+      },
+    };
+
+    fetch("https://calendar-app-8kqm.onrender.com/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(newEvents),
+    }).then(() => {
+      setEvents(newEvents);
+      onClose();
+    });
   };
 
-  fetch("https://calendar-app-8kqm.onrender.com
-", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(newEvents),
-  }).then(() => {
-    setEvents(newEvents);
-    onClose();
-  });
-};
-
   const remove = () => {
-  const newEvents = { ...events };
-  delete newEvents[date];
+    const newEvents = { ...events };
+    delete newEvents[date];
 
-  fetch("https://calendar-app-8kqm.onrender.com
-/events", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(newEvents),
-  }).then(() => {
-    setEvents(newEvents);
-    onClose();
-  });
-};
-
+    fetch("https://calendar-app-8kqm.onrender.com/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(newEvents),
+    }).then(() => {
+      setEvents(newEvents);
+      onClose();
+    });
+  };
 
   return (
     <div className="modal-bg">
@@ -68,7 +64,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
 
         <h2>{date}</h2>
 
-        {/* プリセットボタン */}
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
             <button
@@ -82,10 +77,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-        {/* 予定入力欄 */}
         <div className="text-area-wrapper">
-         
-
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -94,7 +86,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 左下：背景色ボタン */}
         <div className="color-buttons">
           <div
             className={`color-btn ${color === "#c8e6c9" ? "selected" : ""}`}
@@ -118,12 +109,11 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
             className={`color-btn ${color === "#ff5252" ? "selected" : ""}`}
             style={{ background: "#ff5252", color: "black" }}
             onClick={() => toggleColor("#ff5252")}
-            >
+          >
             !
+          </div>
         </div>
-     </div>
 
-        {/* 右下：登録・削除 */}
         <div className="modal-footer">
           <button className="save-btn" onClick={save}>登録</button>
           <button className="danger delete-btn" onClick={remove}>削除</button>
@@ -132,3 +122,4 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     </div>
   );
 }
+

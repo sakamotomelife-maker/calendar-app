@@ -60,8 +60,7 @@ export default function Calendar({ userEmail, onLogout }) {
 
   // 初回ロード時にサーバーから予定取得（認証必須）
   useEffect(() => {
-    fetch("https://calendar-app-8kqm.onrender.com
-/events", {
+    fetch("https://calendar-app-8kqm.onrender.com/events", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -188,3 +187,4 @@ export default function Calendar({ userEmail, onLogout }) {
     </div>
   );
 }
+

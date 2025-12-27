@@ -6,25 +6,23 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState("");
 
   const login = () => {
-  fetch("https://calendar-app-8kqm.onrender.com
-/login", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Login failed");
-      return res.json();
+    fetch("https://calendar-app-8kqm.onrender.com/login", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     })
-    .then(() => {
-      onLogin(); // 成功したときだけログイン扱い
-    })
-    .catch(() => {
-      setError("メールまたはパスワードが違います");
-    });
-};
-
+      .then((res) => {
+        if (!res.ok) throw new Error("Login failed");
+        return res.json();
+      })
+      .then(() => {
+        onLogin(); // 成功したときだけログイン扱い
+      })
+      .catch(() => {
+        setError("メールまたはパスワードが違います");
+      });
+  };
 
   return (
     <div style={{ padding: 20 }}>
@@ -53,3 +51,4 @@ export default function Login({ onLogin }) {
     </div>
   );
 }
+
