@@ -32,7 +32,8 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     },
   };
 
-  fetch("https://calendar-app-u3s5.onrender.com/events", {
+  fetch("https://calendar-app-8kqm.onrender.com
+", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -47,7 +48,8 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   const newEvents = { ...events };
   delete newEvents[date];
 
-  fetch("https://calendar-app-u3s5.onrender.com/events", {
+  fetch("https://calendar-app-8kqm.onrender.com
+/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

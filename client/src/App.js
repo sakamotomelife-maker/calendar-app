@@ -8,7 +8,8 @@ function App() {
 
   // 起動時にログイン状態チェック
   useEffect(() => {
-    fetch("https://calendar-app-u3s5.onrender.com/events", {
+    fetch("https://https://calendar-app-8kqm.onrender.com
+/events", {
       credentials: "include",
     })
       .then((res) => {
@@ -16,7 +17,8 @@ function App() {
           setLoggedIn(true);
 
           // ログイン中ユーザー情報を取得
-          fetch("https://calendar-app-u3s5.onrender.com/me", {
+          fetch("https://calendar-app-8kqm.onrender.com
+/me", {
             credentials: "include",
           })
             .then((r) => r.json())
@@ -30,7 +32,8 @@ function App() {
 
   // ログアウト処理
   const logout = () => {
-    fetch("https://calendar-app-u3s5.onrender.com/logout", {
+    fetch("https://calendar-app-8kqm.onrender.com
+/logout", {
       method: "POST",
       credentials: "include",
     }).then(() => {
@@ -44,7 +47,8 @@ function App() {
     setLoggedIn(true);
 
     // ログイン直後にユーザー情報取得
-    fetch("https://calendar-app-u3s5.onrender.com/me", {
+    fetch("https://calendar-app-8kqm.onrender.com
+/me", {
       credentials: "include",
     })
       .then((r) => r.json())
