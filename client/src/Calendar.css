@@ -84,6 +84,7 @@
 
 
 
+
 /* 年月プルダウン */
 .calendar-header {
   display: flex;
@@ -141,38 +142,35 @@
 
 .common-memo-box {
   margin-top: 20px;
-  padding: 15px;
-  background: #e3f7ff;
-  border: 1px solid #b5d9e8;
-  border-radius: 8px;
-  width: 100%;
+  width: 100%; /* ← デバイス幅に合わせる */
 }
 
 .common-memo-box h3 {
-  margin: 0 0 10px;
-  font-size: 16px;
+  margin: 0 0 6px;
+  font-size: 14px; /* ← 少し小さく */
 }
 
 .common-memo-textarea {
   width: 100%;
-  font-size: 14px;
+  font-size: 12px; /* ← 2px 小さく */
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #aaa;
-  resize: vertical; /* ← 自動で広がる */
+  resize: vertical;
   min-height: 60px;
 }
 
+/* ボタン行 */
 .common-memo-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .common-memo-buttons button {
   padding: 8px 14px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .common-memo-buttons .danger {

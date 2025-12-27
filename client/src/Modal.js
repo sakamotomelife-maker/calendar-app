@@ -47,13 +47,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   }, [preset, text, color]);
 
   // -------------------------
-  // 「登録」ボタンは閉じるだけ
-  // -------------------------
-  const save = () => {
-    onClose();
-  };
-
-  // -------------------------
   // 削除処理
   // -------------------------
   const remove = () => {
@@ -72,10 +65,10 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   return (
-    <div className="modal-bg">
-      <div className="modal">
-        <button className="close" onClick={onClose}>×</button>
-
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        
+        {/* 日付 */}
         <h2>{date}</h2>
 
         {/* プリセットボタン */}
@@ -131,11 +124,11 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           </div>
         </div>
 
-        {/* 登録・削除 */}
+        {/* 削除 */}
         <div className="modal-footer">
-          <button className="save-btn" onClick={save}>閉じる</button>
           <button className="danger delete-btn" onClick={remove}>削除</button>
         </div>
+
       </div>
     </div>
   );
