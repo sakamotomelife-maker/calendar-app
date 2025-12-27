@@ -137,6 +137,9 @@ app.post("/events", authMiddleware, (req, res) => {
 // ----------------------
 // サーバー起動（スマホ対応）
 // ----------------------
-app.listen(3001, "0.0.0.0", () => {
-  console.log("Server running on http://0.0.0.0:3001");
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
