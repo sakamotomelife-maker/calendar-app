@@ -16,7 +16,7 @@ function App() {
           setLoggedIn(true);
 
           // ログイン中ユーザー情報を取得
-          fetch("https://calendar-app-u3s5.onrender.com/events", {
+          fetch("https://calendar-app-u3s5.onrender.com/me", {
             credentials: "include",
           })
             .then((r) => r.json())
@@ -30,7 +30,7 @@ function App() {
 
   // ログアウト処理
   const logout = () => {
-    fetch("http://localhost:3001/logout", {
+    fetch("https://calendar-app-u3s5.onrender.com/logout", {
       method: "POST",
       credentials: "include",
     }).then(() => {
@@ -44,19 +44,17 @@ function App() {
     setLoggedIn(true);
 
     // ログイン直後にユーザー情報取得
-    fetch("http://localhost:3001/me", {
+    fetch("https://calendar-app-u3s5.onrender.com/me", {
       credentials: "include",
     })
       .then((r) => r.json())
       .then((data) => setUserEmail(data.email));
   };
 
-  // 未ログインならログイン画面
   if (!loggedIn) {
     return <Login onLogin={handleLogin} />;
   }
 
-  // ログイン済みならカレンダー
   return (
     <div>
       <h1>カレンダーアプリ</h1>
@@ -66,4 +64,4 @@ function App() {
 }
 
 export default App;
- 
+

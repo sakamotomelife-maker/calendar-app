@@ -23,38 +23,41 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   const save = () => {
-    const newEvents = {
-      ...events,
-      [date]: {
-        preset,
-        note: text,
-        color,
-      },
-    };
-
-    fetch("https://calendar-app-u3s5.onrender.com/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newEvents),
-    }).then(() => {
-      setEvents(newEvents);
-      onClose();
-    });
+  const newEvents = {
+    ...events,
+    [date]: {
+      preset,
+      note: text,
+      color,
+    },
   };
+
+  fetch("https://calendar-app-u3s5.onrender.com/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(newEvents),
+  }).then(() => {
+    setEvents(newEvents);
+    onClose();
+  });
+};
 
   const remove = () => {
-    const newEvents = { ...events };
-    delete newEvents[date];
+  const newEvents = { ...events };
+  delete newEvents[date];
 
-    fetch("https://calendar-app-u3s5.onrender.com/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newEvents),
-    }).then(() => {
-      setEvents(newEvents);
-      onClose();
-    });
-  };
+  fetch("https://calendar-app-u3s5.onrender.com/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(newEvents),
+  }).then(() => {
+    setEvents(newEvents);
+    onClose();
+  });
+};
+
 
   return (
     <div className="modal-bg">
