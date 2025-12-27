@@ -6,23 +6,24 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState("");
 
   const login = () => {
-    fetch("https://calendar-app-u3s5.onrender.com/events", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+  fetch("https://calendar-app-u3s5.onrender.com/login", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Login failed");
+      return res.json();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Login failed");
-        return res.json();
-      })
-      .then(() => {
-        onLogin(); // 成功したときだけログイン扱い
-      })
-      .catch(() => {
-        setError("メールまたはパスワードが違います");
-      });
-  };
+    .then(() => {
+      onLogin(); // 成功したときだけログイン扱い
+    })
+    .catch(() => {
+      setError("メールまたはパスワードが違います");
+    });
+};
+
 
   return (
     <div style={{ padding: 20 }}>

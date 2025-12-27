@@ -10,12 +10,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ----------------------
-// CORS（スマホ・PC 両対応）
+// CORS（本番対応）
 // ----------------------
 app.use(
   cors({
-    origin: true,          // ← ここが重要（どの Origin でも許可）
-    credentials: true,     // Cookie を許可
+    origin: "https://calendar-app-static-epyy.onrender.com", // ← フロントのURL
+    credentials: true, // Cookie を許可
   })
 );
 
@@ -89,10 +89,11 @@ app.post("/login", (req, res) => {
 
   const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "7d" });
 
+  // ★ 本番環境で Cookie を送るための設定
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: true,      // ← HTTPS 必須
+    sameSite: "none",  // ← 別ドメイン間 Cookie の必須設定
   });
 
   res.json({ success: true });
@@ -102,7 +103,10 @@ app.post("/login", (req, res) => {
 // ログアウト
 // ----------------------
 app.post("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    secure: true,
+    sameSite: "none",
+  });
   res.json({ success: true });
 });
 
@@ -135,7 +139,7 @@ app.post("/events", authMiddleware, (req, res) => {
 });
 
 // ----------------------
-// サーバー起動（スマホ対応）
+// サーバー起動
 // ----------------------
 const PORT = process.env.PORT || 3001;
 
