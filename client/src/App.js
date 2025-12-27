@@ -57,7 +57,6 @@ function App() {
 
   return (
     <div>
-      <h1>カレンダーアプリ</h1>
       <Calendar userEmail={userEmail} onLogout={logout} />
     </div>
   );

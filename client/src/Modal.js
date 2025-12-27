@@ -21,6 +21,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     setColor((prev) => (prev === value ? "" : value));
   };
 
+  // -------------------------
+  // 保存処理
+  // -------------------------
   const save = () => {
     const newEvents = {
       ...events,
@@ -42,6 +45,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     });
   };
 
+  // -------------------------
+  // 削除処理
+  // -------------------------
   const remove = () => {
     const newEvents = { ...events };
     delete newEvents[date];
@@ -64,6 +70,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
 
         <h2>{date}</h2>
 
+        {/* プリセットボタン */}
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
             <button
@@ -77,6 +84,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
+        {/* 予定入力欄 */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -86,6 +94,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
+        {/* 背景色ボタン */}
         <div className="color-buttons">
           <div
             className={`color-btn ${color === "#c8e6c9" ? "selected" : ""}`}
@@ -114,6 +123,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           </div>
         </div>
 
+        {/* 登録・削除 */}
         <div className="modal-footer">
           <button className="save-btn" onClick={save}>登録</button>
           <button className="danger delete-btn" onClick={remove}>削除</button>

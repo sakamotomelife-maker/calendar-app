@@ -1,3 +1,4 @@
+/* カレンダー全体 */
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -5,19 +6,36 @@
   margin-top: 20px;
 }
 
+/* セル（余白ゼロ・左上寄せ） */
 .cell {
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 0;                     /* ← 余白ゼロ */
   height: 80px;
   position: relative;
   cursor: pointer;
   background: #f9f9f9;
+
+  display: flex;                  /* ← 上寄せ */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;        /* ← 左上に寄せる */
 }
 
+/* ホバー */
 .cell:hover {
   background: #e0f7fa;
 }
 
+/* 日付数字（小さめ・詰める） */
+.cell > div:first-child {
+  margin: 0;
+  padding: 0;
+  font-size: 13px;                /* ← 小さめに調整 */
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+/* イベント（下固定） */
 .event {
   position: absolute;
   bottom: 4px;
@@ -26,6 +44,7 @@
   color: #333;
 }
 
+/* プリセット色 */
 .preset-早出 {
   color: #1565c0;
   font-weight: bold;
@@ -39,35 +58,23 @@
   color: #c2185b;
 }
 
+/* メモ（UIフォント・詰めて表示） */
 .event-note {
-  font-size: 10px;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  font-size: 11px;                /* ← 小さめで情報量UP */
+  line-height: 1.1;               /* ← 行間詰める */
+  white-space: normal;            /* ← 折り返しOK */
+  word-break: break-word;         /* ← 長文でも崩れない */
   margin-top: 2px;
 }
 
-/*プルダウン*/
+/* 年月プルダウン */
 .calendar-header {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
-}
-
-/*曜日*/
-.weekday-row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: bold;
-  margin-top: 6px; /* ← これが 0.5行分くらい */
-}
-
-.weekday-cell {
-  padding: 5px 0;
-}
-
-.empty {
-  background: #f0f0f0;
 }
 
 .calendar-header select {
@@ -80,23 +87,39 @@
   padding: 4px 10px;
 }
 
-.weekday-cell {
+/* 曜日 */
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-weight: bold;
-  padding: 8px 0;
+  margin-top: 6px;
 }
 
+.weekday-cell {
+  padding: 5px 0;
+  font-weight: bold;
+}
+
+/* 空白セル */
+.empty {
+  background: #f0f0f0;
+}
+
+/* 土日色 */
 .saturday {
-  background: #e3f2fd; /* 薄い水色 */
+  background: #e3f2fd;
 }
 
 .sunday {
-  background: #ffebee; /* 薄いピンク */
+  background: #ffebee;
 }
 
+/* 祝日名 */
 .holiday-name {
   font-size: 10px;
   color: #d32f2f;
   margin-top: 2px;
   white-space: nowrap;
 }
+
