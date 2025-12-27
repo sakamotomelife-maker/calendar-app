@@ -8,7 +8,7 @@ function App() {
 
   // 起動時にログイン状態チェック
   useEffect(() => {
-    fetch("https://https://calendar-app-8kqm.onrender.com
+    fetch("https://calendar-app-8kqm.onrender.com
 /events", {
       credentials: "include",
     })
