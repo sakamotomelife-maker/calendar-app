@@ -14,8 +14,8 @@ app.use(cookieParser());
 // ----------------------
 app.use(
   cors({
-    origin: "https://calendar-app-static-epyy.onrender.com", // ← フロントのURL
-    credentials: true, // Cookie を許可
+    origin: "https://calendar-app-static-epyy.onrender.com", // ← フロントURL
+    credentials: true,
   })
 );
 
@@ -36,30 +36,6 @@ function saveDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-
-// 共通メモ取得
-app.get("/common-memo", authMiddleware, (req, res) => {
-  const db = loadDB();
-  const memo = db.commonMemo?.[req.userId] || "";
-  res.json({ memo });
-});
-
-// 共通メモ保存
-app.post("/common-memo", authMiddleware, (req, res) => {
-  const db = loadDB();
-  if (!db.commonMemo) db.commonMemo = {};
-  db.commonMemo[req.userId] = req.body.memo || "";
-  saveDB(db);
-  res.json({ success: true });
-});
-
-
-
-
-
-
-
-
 // ----------------------
 // 初期ユーザー
 // ----------------------
@@ -76,6 +52,9 @@ const initialDB = {
   events: {
     "1": {}
   },
+  commonMemo: {
+    "1": ""
+  }
 };
 
 if (!fs.existsSync(DB_FILE)) {
@@ -83,7 +62,7 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 // ----------------------
-// JWT 認証ミドルウェア
+// JWT 認証ミドルウェア（※ここを上に移動）
 // ----------------------
 function authMiddleware(req, res, next) {
   const token = req.cookies.token;
@@ -97,6 +76,26 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({ error: "Invalid token" });
   }
 }
+
+// ----------------------
+// 共通メモ取得
+// ----------------------
+app.get("/common-memo", authMiddleware, (req, res) => {
+  const db = loadDB();
+  const memo = db.commonMemo?.[req.userId] || "";
+  res.json({ memo });
+});
+
+// ----------------------
+// 共通メモ保存
+// ----------------------
+app.post("/common-memo", authMiddleware, (req, res) => {
+  const db = loadDB();
+  if (!db.commonMemo) db.commonMemo = {};
+  db.commonMemo[req.userId] = req.body.memo || "";
+  saveDB(db);
+  res.json({ success: true });
+});
 
 // ----------------------
 // ログイン
@@ -113,11 +112,10 @@ app.post("/login", (req, res) => {
 
   const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "7d" });
 
-  // ★ 本番環境で Cookie を送るための設定
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,      // ← HTTPS 必須
-    sameSite: "none",  // ← 別ドメイン間 Cookie の必須設定
+    secure: true,
+    sameSite: "none",
   });
 
   res.json({ success: true });

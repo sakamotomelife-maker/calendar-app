@@ -14,6 +14,7 @@ export default function Calendar({ userEmail, onLogout }) {
 
   // 共通メモ
   const [commonMemo, setCommonMemo] = useState("");
+  const [memoSaved, setMemoSaved] = useState(false);
 
   // 月曜始まりの曜日
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
@@ -85,6 +86,9 @@ export default function Calendar({ userEmail, onLogout }) {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ memo: commonMemo }),
+    }).then(() => {
+      setMemoSaved(true);
+      setTimeout(() => setMemoSaved(false), 1500);
     });
   };
 
@@ -218,6 +222,8 @@ export default function Calendar({ userEmail, onLogout }) {
           <button onClick={saveCommonMemo}>保存</button>
           <button className="danger" onClick={deleteCommonMemo}>削除</button>
         </div>
+
+        {memoSaved && <div className="memo-saved">保存しました</div>}
       </div>
 
       {/* モーダル */}
