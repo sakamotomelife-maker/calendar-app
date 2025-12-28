@@ -207,7 +207,7 @@ export default function Calendar({ userEmail, onLogout }) {
               {holidayName && (
                 <div className="event preset-公休">
                   {holidayName.length > 6
-                    ? holidayName.slice(0, 6) + "…"
+                    ? holidayName.slice(0, 6) + "..."
                     : holidayName}
                 </div>
               )}
