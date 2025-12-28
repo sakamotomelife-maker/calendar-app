@@ -1,4 +1,3 @@
-// Modal.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./Modal.css";
@@ -28,13 +27,11 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     setColor((prev) => (prev === value ? "" : value));
   };
 
-  // -------------------------
-  // Supabase 保存処理（安定版）
-  // -------------------------
   const saveToSupabase = async (newEvents) => {
     setEvents(newEvents);
 
-    const user = (await supabase.auth.getUser()).data.user;
+    const session = (await supabase.auth.getSession()).data.session;
+    const user = session?.user;
     if (!user) return;
 
     const payload = {
@@ -45,7 +42,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       color,
     };
 
-    // 既存データがあるか確認
     const { data: existing } = await supabase
       .from("events")
       .select("*")
@@ -54,20 +50,15 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       .maybeSingle();
 
     if (existing) {
-      // UPDATE
       await supabase
         .from("events")
         .update(payload)
         .eq("id", existing.id);
     } else {
-      // INSERT
       await supabase.from("events").insert(payload);
     }
   };
 
-  // -------------------------
-  // 自動保存（preset / text / color が変わるたびに保存）
-  // -------------------------
   useEffect(() => {
     const newEvents = {
       ...events,
@@ -76,21 +67,17 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     saveToSupabase(newEvents);
   }, [preset, text, color]);
 
-  // -------------------------
-  // 削除処理
-  // -------------------------
   const remove = async () => {
-    const user = (await supabase.auth.getUser()).data.user;
+    const session = (await supabase.auth.getSession()).data.session;
+    const user = session?.user;
     if (!user) return;
 
-    // Supabase から削除
     await supabase
       .from("events")
       .delete()
       .eq("user_id", user.id)
       .eq("date", date);
 
-    // React state から削除
     const newEvents = { ...events };
     delete newEvents[date];
     setEvents(newEvents);
@@ -101,11 +88,8 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        
-        {/* 日付 */}
         <h2>{date}</h2>
 
-        {/* プリセットボタン */}
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
             <button
@@ -119,7 +103,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-        {/* 予定入力欄 */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -129,40 +112,22 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 背景色ボタン */}
         <div className="color-buttons">
-          <div
-            className={`color-btn ${color === "#c8e6c9" ? "selected" : ""}`}
-            style={{ background: "#c8e6c9" }}
-            onClick={() => toggleColor("#c8e6c9")}
-          ></div>
-
-          <div
-            className={`color-btn ${color === "#fff9c4" ? "selected" : ""}`}
-            style={{ background: "#fff9c4" }}
-            onClick={() => toggleColor("#fff9c4")}
-          ></div>
-
-          <div
-            className={`color-btn ${color === "#ffebee" ? "selected" : ""}`}
-            style={{ background: "#ffebee" }}
-            onClick={() => toggleColor("#ffebee")}
-          ></div>
-
-          <div
-            className={`color-btn ${color === "#ff5252" ? "selected" : ""}`}
-            style={{ background: "#ff5252", color: "black" }}
-            onClick={() => toggleColor("#ff5252")}
-          >
-            !
-          </div>
+          {["#c8e6c9", "#fff9c4", "#ffebee", "#ff5252"].map((col, i) => (
+            <div
+              key={i}
+              className={`color-btn ${color === col ? "selected" : ""}`}
+              style={{ background: col, color: col === "#ff5252" ? "black" : "" }}
+              onClick={() => toggleColor(col)}
+            >
+              {col === "#ff5252" ? "!" : ""}
+            </div>
+          ))}
         </div>
 
-        {/* 削除 */}
         <div className="modal-footer">
           <button className="danger delete-btn" onClick={remove}>削除</button>
         </div>
-
       </div>
     </div>
   );

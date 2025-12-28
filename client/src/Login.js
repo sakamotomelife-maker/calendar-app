@@ -1,4 +1,3 @@
-// Login.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./Login.css";
@@ -15,7 +14,6 @@ export default function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  // 保存されたメールアドレスを読み込む
   useEffect(() => {
     const savedEmail = localStorage.getItem("savedEmail");
     if (savedEmail) {
@@ -45,17 +43,25 @@ export default function Login({ onLogin }) {
       localStorage.removeItem("savedEmail");
     }
 
+    // 🔥 セッションが安定するまで少し待つ（重要）
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    // 🔥 セッションが本当に存在するか確認
+    const session = (await supabase.auth.getSession()).data.session;
+    if (!session) {
+      setError("ログインセッションの取得に失敗しました。もう一度お試しください。");
+      return;
+    }
+
     onLogin();
   };
 
   return (
     <div className="login-container">
-      {/* タイトル */}
       <h1 className="title">MyCalendar</h1>
       <p className="subtitle">-created by Yuki Sakamoto-</p>
 
       <form onSubmit={handleSubmit} className="login-form">
-        {/* 入力ボックス（水色の枠） */}
         <div className="login-box">
           <div>
             <label className="login-label">メールアドレス</label>
@@ -89,10 +95,8 @@ export default function Login({ onLogin }) {
           </div>
         </div>
 
-        {/* エラー表示 */}
         {error && <div className="login-error">{error}</div>}
 
-        {/* メールアドレス保存（右寄せ・水色枠の外） */}
         <div className="remember-row remember-outside">
           <label>
             <input
@@ -104,7 +108,6 @@ export default function Login({ onLogin }) {
           </label>
         </div>
 
-        {/* ログイン認証ボタン（水色枠の外・フォント小さめ） */}
         <div className="login-btn-wrapper">
           <button type="submit" className="login-btn">
             ログイン認証

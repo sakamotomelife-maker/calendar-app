@@ -1,4 +1,3 @@
-// App.js
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Login from "./Login";
@@ -18,8 +17,8 @@ export default function App() {
   // -------------------------
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user || null);
+      const session = (await supabase.auth.getSession()).data.session;
+      setUser(session?.user || null);
       setLoading(false);
     };
 
@@ -49,8 +48,8 @@ export default function App() {
   // Login.js からのログイン通知
   // -------------------------
   const handleLogin = async () => {
-    const { data } = await supabase.auth.getUser();
-    setUser(data.user || null);
+    const session = (await supabase.auth.getSession()).data.session;
+    setUser(session?.user || null);
   };
 
   if (loading) {
