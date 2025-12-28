@@ -1,5 +1,7 @@
+// Login.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import "./login.css";
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
@@ -10,6 +12,7 @@ export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberEmail, setRememberEmail] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   // 保存されたメールアドレスを読み込む
@@ -46,35 +49,51 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>ログイン</h2>
+    <div className="login-container">
+      {/* タイトル */}
+      <h1 className="title">MyCalendar</h1>
+      <p className="subtitle">-created by Yuki Sakamoto-</p>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 10 }}>
-          <label>メールアドレス</label>
-          <br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
-          />
+      <form onSubmit={handleSubmit} className="login-form">
+        {/* 入力ボックス（水色の枠） */}
+        <div className="login-box">
+          <div>
+            <label className="login-label">メールアドレス</label>
+            <input
+              type="email"
+              className="login-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="login-label">パスワード</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="login-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                👁
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>パスワード</label>
-          <br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
-          />
-        </div>
+        {/* エラー表示 */}
+        {error && <div className="login-error">{error}</div>}
 
-        <div style={{ marginBottom: 10 }}>
+        {/* メールアドレス保存（右寄せ・水色枠の外） */}
+        <div className="remember-row remember-outside">
           <label>
             <input
               type="checkbox"
@@ -85,20 +104,12 @@ export default function Login({ onLogin }) {
           </label>
         </div>
 
-        {error && (
-          <div style={{ color: "red", marginBottom: 10 }}>{error}</div>
-        )}
-
-        <button
-          type="submit"
-          style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            cursor: "pointer",
-          }}
-        >
-          ログイン
-        </button>
+        {/* ログイン認証ボタン（水色枠の外・フォント小さめ） */}
+        <div className="login-btn-wrapper">
+          <button type="submit" className="login-btn">
+            ログイン認証
+          </button>
+        </div>
       </form>
     </div>
   );

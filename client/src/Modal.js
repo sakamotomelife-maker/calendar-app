@@ -1,3 +1,4 @@
+// Modal.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./Modal.css";
@@ -28,7 +29,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   // -------------------------
-  // Supabase 保存処理
+  // Supabase 保存処理（安定版）
   // -------------------------
   const saveToSupabase = async (newEvents) => {
     setEvents(newEvents);

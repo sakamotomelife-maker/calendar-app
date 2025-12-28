@@ -1,3 +1,4 @@
+// Calendar.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Modal from "./Modal";
@@ -211,9 +212,25 @@ export default function Calendar({ userEmail, onLogout }) {
           const event = events[dateStr];
           const holidayName = holidays[dateStr];
 
+          // 今日判定
+          const isToday =
+            year === today.getFullYear() &&
+            month === today.getMonth() &&
+            day === today.getDate();
+
           let cellClass = "cell";
+
+          // 土曜
           if (weekdayIndex === 5) cellClass += " saturday";
+
+          // 日曜
           if (weekdayIndex === 6) cellClass += " sunday";
+
+          // 祝日 → 日曜と同じ色
+          if (holidayName) cellClass += " holiday";
+
+          // 今日 → 薄い緑
+          if (isToday) cellClass += " today";
 
           const bgColor = event?.color || "";
 
