@@ -1,3 +1,10 @@
+/* 最大幅を設定して中央寄せ */
+.calendar-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 /* -------------------------
    上部（メールアドレス・ログアウト）
 ------------------------- */
@@ -15,11 +22,13 @@
 }
 
 .logout-btn {
-  padding: 6px 12px;
-  font-size: 14px;
+  padding: 4px 10px;
+  font-size: 12px;
   cursor: pointer;
+  background: #eee;
+  border: 1px solid #aaa;
+  border-radius: 4px;
 }
-
 
 /* -------------------------
    年月ヘッダー
@@ -38,7 +47,6 @@
   font-size: 14px;
 }
 
-
 /* -------------------------
    曜日行
 ------------------------- */
@@ -55,7 +63,6 @@
   background: none;
   border-bottom: 1px solid #ccc;
 }
-
 
 /* -------------------------
    カレンダー本体
@@ -90,12 +97,12 @@
   background: #ffebee;
 }
 
-/* 祝日 → 日曜と同じ色 */
+/* 祝日 */
 .cell.holiday {
   background: #ffebee !important;
 }
 
-/* 今日 → 薄い緑 */
+/* 今日 */
 .cell.today {
   background: #d7f7d7 !important;
 }
@@ -107,10 +114,8 @@
 
 .calendar-day-number {
   font-size: 12px;
-  font-weight: normal;
   margin-bottom: 2px;
 }
-
 
 /* -------------------------
    イベント表示
@@ -121,25 +126,21 @@
   bottom: 4px;
   left: 4px;
   right: 4px;
-  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* 公休・祝日 → 赤字 */
 .preset-公休 {
   color: red;
   font-weight: bold;
 }
 
-/* 早出 → 青 */
 .preset-早出 {
   color: #0288d1;
   font-weight: bold;
 }
 
-/* 遅出 → 紫 */
 .preset-遅出 {
   color: #6a1b9a;
   font-weight: bold;
@@ -147,14 +148,11 @@
 
 .event-note {
   font-size: 11px;
-  margin-top: 2px;
-  white-space: pre-wrap;
   position: absolute;
   bottom: 18px;
   left: 4px;
   right: 4px;
 }
-
 
 /* -------------------------
    共通メモ欄
@@ -162,7 +160,6 @@
 .common-memo-box {
   margin-top: 20px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .common-memo-box h3 {
@@ -178,129 +175,11 @@
   border: 1px solid #aaa;
   resize: vertical;
   min-height: 60px;
-  box-sizing: border-box;
 }
 
-.common-memo-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.common-memo-buttons button {
-  padding: 8px 14px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.common-memo-buttons .danger {
-  background: #ff5252;
-  color: white;
-}
-
-/* 保存しました */
-.memo-saved {
+.memo-hint {
   margin-top: 4px;
-  font-size: 12px;
-  color: #0288d1;
-  text-align: center;
-  animation: memoFlash 1.2s ease-out;
-}
-
-@keyframes memoFlash {
-  0%   { opacity: 0; background: transparent; }
-  20%  { opacity: 1; background: #e3f2fd; }
-  100% { opacity: 1; background: transparent; }
-}
-
-
-/* -------------------------
-   モーダル（Modal.css と連携）
-------------------------- */
-.modal-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 280px;
-  box-sizing: border-box;
-}
-
-.btn-group {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.preset-btn {
-  padding: 10px 18px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #888;
-  background: #f0f0f0;
-  cursor: pointer;
-}
-
-.preset-btn.active {
-  background: #cce5ff;
-  border-color: #5599dd;
-  font-weight: bold;
-}
-
-.preset-btn:disabled {
-  background: #ddd;
-  cursor: not-allowed;
-}
-
-.text-area-wrapper textarea {
-  width: 100%;
-  height: 60px;
-  resize: vertical;
-  padding: 6px;
-  font-size: 14px;
-}
-
-.color-buttons {
-  display: flex;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.color-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 4px;
-  border: 1px solid #888;
-  cursor: pointer;
-}
-
-.color-btn.selected {
-  outline: 2px solid #0288d1;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.delete-btn {
-  padding: 8px 14px;
-  background: #ff5252;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  font-size: 11px;
+  color: #777;
 }
 

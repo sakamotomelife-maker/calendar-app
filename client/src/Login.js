@@ -43,10 +43,10 @@ export default function Login({ onLogin }) {
       localStorage.removeItem("savedEmail");
     }
 
-    // 🔥 セッションが安定するまで少し待つ（重要）
+    // セッションが安定するまで少し待つ
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // 🔥 セッションが本当に存在するか確認
+    // セッションが本当に存在するか確認
     const session = (await supabase.auth.getSession()).data.session;
     if (!session) {
       setError("ログインセッションの取得に失敗しました。もう一度お試しください。");
@@ -86,10 +86,10 @@ export default function Login({ onLogin }) {
               />
               <button
                 type="button"
-                className="toggle-password"
+                className="toggle-password-text"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                👁
+                {showPassword ? "非表示" : "表示"}
               </button>
             </div>
           </div>

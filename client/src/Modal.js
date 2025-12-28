@@ -68,6 +68,8 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   }, [preset, text, color]);
 
   const remove = async () => {
+    if (!window.confirm("この日の予定を削除しますか？")) return;
+
     const session = (await supabase.auth.getSession()).data.session;
     const user = session?.user;
     if (!user) return;
@@ -88,7 +90,11 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>{date}</h2>
+
+        {/* 削除ボタン（右上） */}
+        <button className="delete-btn-top" onClick={remove}>削除</button>
+
+        <h2 className="modal-date">{date}</h2>
 
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
@@ -108,28 +114,25 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="予定を入力"
-            className={preset ? "textarea-with-preset" : "textarea-no-preset"}
           />
         </div>
 
+        {/* 色ボタン 7 色 */}
         <div className="color-buttons">
-          {["#c8e6c9", "#fff9c4", "#ffebee", "#ff5252"].map((col, i) => (
+          {[
+            "#c8e6c9", // 薄緑（今日と被らないよう少し濃く）
+            "#fff9c4", // 薄黄
+            "#ffebee", // 薄赤
+            "#bbdefb", // 薄青（追加）
+            "#f8bbd0", // 薄ピンク（追加）
+            "#d1c4e9", // 薄紫（追加）
+            "#ffccbc", // 薄オレンジ（追加）
+          ].map((col, i) => (
             <div
               key={i}
               className={`color-btn ${color === col ? "selected" : ""}`}
-              style={{ background: col, color: col === "#ff5252" ? "black" : "" }}
+              style={{ background: col }}
               onClick={() => toggleColor(col)}
-            >
-              {col === "#ff5252" ? "!" : ""}
-            </div>
+            />
           ))}
-        </div>
-
-        <div className="modal-footer">
-          <button className="danger delete-btn" onClick={remove}>削除</button>
-        </div>
-      </div>
-    </div>
-  );
-}
 

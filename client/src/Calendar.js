@@ -17,7 +17,6 @@ export default function Calendar({ userEmail, onLogout }) {
   const [events, setEvents] = useState({});
   const [holidays, setHolidays] = useState({});
   const [commonMemo, setCommonMemo] = useState("");
-  const [memoSaved, setMemoSaved] = useState(false);
 
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
 
@@ -88,41 +87,34 @@ export default function Calendar({ userEmail, onLogout }) {
     loadMemo();
   }, []);
 
-  const saveCommonMemo = async () => {
-    const session = (await supabase.auth.getSession()).data.session;
-    const user = session?.user;
-    if (!user) return;
+  // 共通メモ：リアルタイム自動保存（300ms デバウンス）
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      const session = (await supabase.auth.getSession()).data.session;
+      const user = session?.user;
+      if (!user) return;
 
-    const { data: existing } = await supabase
-      .from("common_memo")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (existing) {
-      await supabase
+      const { data: existing } = await supabase
         .from("common_memo")
-        .update({ memo: commonMemo })
-        .eq("user_id", user.id);
-    } else {
-      await supabase.from("common_memo").insert({
-        user_id: user.id,
-        memo: commonMemo,
-      });
-    }
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    setMemoSaved(true);
-    setTimeout(() => setMemoSaved(false), 1500);
-  };
+      if (existing) {
+        await supabase
+          .from("common_memo")
+          .update({ memo: commonMemo })
+          .eq("user_id", user.id);
+      } else {
+        await supabase.from("common_memo").insert({
+          user_id: user.id,
+          memo: commonMemo,
+        });
+      }
+    }, 300);
 
-  const deleteCommonMemo = async () => {
-    const session = (await supabase.auth.getSession()).data.session;
-    const user = session?.user;
-    if (!user) return;
-
-    await supabase.from("common_memo").delete().eq("user_id", user.id);
-    setCommonMemo("");
-  };
+    return () => clearTimeout(timeout);
+  }, [commonMemo]);
 
   // 祝日読み込み
   useEffect(() => {
@@ -132,11 +124,17 @@ export default function Calendar({ userEmail, onLogout }) {
       .catch(() => setHolidays({}));
   }, []);
 
+  const handleLogout = () => {
+    if (window.confirm("ログアウトしますか？")) {
+      onLogout();
+    }
+  };
+
   return (
-    <div style={{ padding: 20 }}>
+    <div className="calendar-wrapper">
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
-        <button className="logout-btn" onClick={onLogout}>ログアウト</button>
+        <button className="logout-btn" onClick={handleLogout}>ログアウト</button>
       </div>
 
       {/* 年月 */}
@@ -237,12 +235,9 @@ export default function Calendar({ userEmail, onLogout }) {
           onChange={(e) => setCommonMemo(e.target.value)}
           rows={3}
         />
-        <div className="common-memo-buttons">
-          <button onClick={saveCommonMemo}>保存</button>
-          <button className="danger" onClick={deleteCommonMemo}>削除</button>
+        <div className="memo-hint">
+          入力すると自動保存されます
         </div>
-
-        {memoSaved && <div className="memo-saved">保存しました</div>}
       </div>
 
       {/* モーダル */}
