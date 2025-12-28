@@ -52,7 +52,7 @@ export default function App() {
     const { data } = await supabase.auth.getUser();
     setUser(data.user || null);
   };
-
+Login.css
   if (loading) {
     return <div style={{ padding: 20 }}>読み込み中...</div>;
   }

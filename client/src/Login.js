@@ -1,7 +1,7 @@
 // Login.js
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import "./login.css";
+import "./Login.css";
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
