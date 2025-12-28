@@ -20,7 +20,6 @@ export default function Calendar({ userEmail, onLogout }) {
   const [memoSaved, setMemoSaved] = useState(false);
 
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
-  const days = getCalendarDays(year, month);
 
   function getCalendarDays(year, month) {
     const firstDay = new Date(year, month, 1);
@@ -34,6 +33,8 @@ export default function Calendar({ userEmail, onLogout }) {
     return days;
   }
 
+  const days = getCalendarDays(year, month);
+
   function changeMonth(offset) {
     let newMonth = month + offset;
     let newYear = year;
@@ -43,6 +44,7 @@ export default function Calendar({ userEmail, onLogout }) {
     setYear(newYear);
   }
 
+  // 予定読み込み
   useEffect(() => {
     const loadEvents = async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -68,6 +70,7 @@ export default function Calendar({ userEmail, onLogout }) {
     loadEvents();
   }, []);
 
+  // 共通メモ読み込み
   useEffect(() => {
     const loadMemo = async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -121,6 +124,7 @@ export default function Calendar({ userEmail, onLogout }) {
     setCommonMemo("");
   };
 
+  // 祝日読み込み
   useEffect(() => {
     fetch("https://holidays-jp.github.io/api/v1/date.json")
       .then((res) => res.json())
@@ -132,4 +136,126 @@ export default function Calendar({ userEmail, onLogout }) {
     <div style={{ padding: 20 }}>
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
-        <button className="logout-btn
+        <button className="logout-btn" onClick={onLogout}>ログアウト</button>
+      </div>
+
+      {/* 年月 */}
+      <div className="calendar-header">
+        <button onClick={() => changeMonth(-1)}>←</button>
+
+        <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+          {Array.from({ length: 20 }, (_, i) => today.getFullYear() - 10 + i).map(
+            (y) => (
+              <option key={y} value={y}>{y}年</option>
+            )
+          )}
+        </select>
+
+        <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i} value={i}>{i + 1}月</option>
+          ))}
+        </select>
+
+        <button onClick={() => changeMonth(1)}>→</button>
+      </div>
+
+      {/* 曜日 */}
+      <div className="weekday-row">
+        {weekdays.map((w) => (
+          <div key={w} className="weekday-cell">{w}</div>
+        ))}
+      </div>
+
+      {/* カレンダー */}
+      <div className="calendar">
+        {days.map((day, index) => {
+          const weekdayIndex = index % 7;
+
+          if (day === null) {
+            return <div key={index} className="cell empty"></div>;
+          }
+
+          const dateStr = `${year}-${String(month + 1).padStart(
+            2,
+            "0"
+          )}-${String(day).padStart(2, "0")}`;
+
+          const event = events[dateStr];
+          const holidayName = holidays[dateStr];
+
+          const isToday =
+            year === today.getFullYear() &&
+            month === today.getMonth() &&
+            day === today.getDate();
+
+          let cellClass = "cell";
+          if (weekdayIndex === 5) cellClass += " saturday";
+          if (weekdayIndex === 6) cellClass += " sunday";
+          if (holidayName) cellClass += " holiday";
+          if (isToday) cellClass += " today";
+
+          const bgColor = event?.color || "";
+
+          return (
+            <div
+              key={index}
+              className={cellClass}
+              style={{ background: bgColor }}
+              onClick={() => setSelectedDate(dateStr)}
+            >
+              <div className="calendar-day-number">{day}</div>
+
+              {holidayName && (
+                <div className="event preset-公休">
+                  {holidayName.length > 6
+                    ? holidayName.slice(0, 6) + "…"
+                    : holidayName}
+                </div>
+              )}
+
+              {event?.preset && (
+                <div className={`event preset-${event.preset}`}>
+                  {event.preset}
+                </div>
+              )}
+
+              {event?.note && (
+                <div className="event-note">{event.note}</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 共通メモ */}
+      <div className="common-memo-box">
+        <h3>共通メモ</h3>
+        <textarea
+          className="common-memo-textarea"
+          value={commonMemo}
+          onChange={(e) => setCommonMemo(e.target.value)}
+          rows={3}
+        />
+        <div className="common-memo-buttons">
+          <button onClick={saveCommonMemo}>保存</button>
+          <button className="danger" onClick={deleteCommonMemo}>削除</button>
+        </div>
+
+        {memoSaved && <div className="memo-saved">保存しました</div>}
+      </div>
+
+      {/* モーダル */}
+      {selectedDate && (
+        <Modal
+          date={selectedDate}
+          events={events}
+          setEvents={setEvents}
+          holidays={holidays}
+          onClose={() => setSelectedDate(null)}
+        />
+      )}
+    </div>
+  );
+}
+
