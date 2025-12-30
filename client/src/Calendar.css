@@ -126,7 +126,7 @@
 .event {
   font-size: 11px;
   position: absolute;
-  bottom: 4px;
+  bottom: 1px;
   left: 4px;
   right: 4px;
   white-space: nowrap;
@@ -135,13 +135,15 @@
 }
 
 .event-note {
-  margin-top: 14px;
+  margin-top: 16px;
   font-size: 11px;
   position: relative;
   white-space: pre-wrap; /* ← 改行をそのまま表示 */
   bottom: 18px;
+  /*
   left: 4px;
   right: 4px;
+  */
   line-height: 1.2;
 }
 
@@ -250,10 +252,9 @@
 
     font-size: 9px;
     margin-top: 14px;
-    /* bottom: 14px; */
-
+    /* bottom: 14px;
     left: 0.5px;
-    right: 0.5px;
+    right: 0.5px;*/
   }
 
   .weekday-cell {
