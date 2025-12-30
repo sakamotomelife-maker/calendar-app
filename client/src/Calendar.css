@@ -238,3 +238,10 @@
   font-size: 11px;
   color: #777;
 }
+
+.version{
+  margin-top: 4px;
+  font-size: 11px;
+  color: #777;
+  text-align: right;
+}
