@@ -122,56 +122,7 @@
   margin-bottom: 2px;
 }
 
-/* 1000px以上でフォントサイズを少し大きく */
-@media (min-width: 1000px) {
-  .calendar-day-number {
-    font-size: 13px;
-  }
-  .event,
-  .event-note {
-    font-size: 12px;
-  }
-}
-
-/* スマホ（横幅480px以下）だけ適用 */
-@media (max-width: 480px) {
-
-  /* 横スクロール防止 */
-  .calendar-wrapper {
-    padding: 10px;
-  }
-
-  /* セル縮小 */
-  .cell {
-    min-height: 75px;
-    padding: 2px;
-    font-size: 8px;
-  }
-
-  .calendar-day-number {
-    font-size: 10px;
-  }
-
-  /* イベント文字を小さく */
-  .event {
-    font-size: 4px;
-    bottom: 2px;
-    left: 2px;
-    right: 2px;
-  }
-
-  .event-note {
-    font-size: 4px;
-    bottom: 14px;
-  }
-
-  .weekday-cell {
-    padding: 4px 0;
-  }
-}
-
-
-/* イベント表示 */
+/* イベント表示（PC 基準） */
 .event {
   font-size: 11px;
   position: absolute;
@@ -181,6 +132,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.event-note {
+  font-size: 11px;
+  position: absolute;
+  bottom: 18px;
+  left: 4px;
+  right: 4px;
 }
 
 .preset-公休 {
@@ -198,12 +157,15 @@
   font-weight: bold;
 }
 
-.event-note {
-  font-size: 11px;
-  position: absolute;
-  bottom: 18px;
-  left: 4px;
-  right: 4px;
+/* 1000px以上でフォントサイズを少し大きく */
+@media (min-width: 1000px) {
+  .calendar-day-number {
+    font-size: 13px;
+  }
+  .event,
+  .event-note {
+    font-size: 12px;
+  }
 }
 
 /* 共通メモ欄（カレンダーと完全に幅を揃える） */
@@ -240,9 +202,48 @@
   color: #777;
 }
 
-.version{
+.version {
   margin-top: 4px;
   font-size: 11px;
   color: #777;
   text-align: right;
+}
+
+/* ============================= */
+/* スマホ（横幅480px以下）だけ適用 */
+/* ============================= */
+@media (max-width: 480px) {
+
+  /* 横スクロール防止 */
+  .calendar-wrapper {
+    padding: 10px;
+  }
+
+  /* セル縮小 */
+  .cell {
+    min-height: 75px;
+    padding: 2px;
+    font-size: 8px;
+  }
+
+  .calendar-day-number {
+    font-size: 10px;
+  }
+
+  /* イベント文字を小さく（スマホ用が確実に勝つ） */
+  .event {
+    font-size: 4px;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+  }
+
+  .event-note {
+    font-size: 4px;
+    bottom: 14px;
+  }
+
+  .weekday-cell {
+    padding: 4px 0;
+  }
 }
