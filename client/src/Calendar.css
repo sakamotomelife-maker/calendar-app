@@ -232,7 +232,7 @@
 
   /* イベント文字を小さく（スマホ用が確実に勝つ） */
   .event {
-    font-size: 4px;
+    font-size: 8px;
     bottom: 2px;
     left: 2px;
     right: 2px;
