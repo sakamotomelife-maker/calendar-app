@@ -1,19 +1,17 @@
-/* 最大幅を設定して中央寄せ */
+/* 最大幅を1200pxに拡大 */
 .calendar-wrapper {
-  max-width: 800px; /* 900px から少し狭める */
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 20px;
 }
 
-/* -------------------------
-   上部（メールアドレス・ログアウト）
-------------------------- */
+/* 上部（メールアドレス・ログアウト） */
 .calendar-top-bar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -22,18 +20,17 @@
   color: #555;
 }
 
+/* ログアウトボタンを小さく */
 .logout-btn {
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 3px 7px;
+  font-size: 9px;
   cursor: pointer;
   background: #eee;
   border: 1px solid #aaa;
   border-radius: 4px;
 }
 
-/* -------------------------
-   年月ヘッダー
-------------------------- */
+/* 年月ヘッダー */
 .calendar-header {
   display: flex;
   justify-content: center;
@@ -48,9 +45,7 @@
   font-size: 14px;
 }
 
-/* -------------------------
-   曜日行
-------------------------- */
+/* 曜日行 */
 .weekday-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -65,9 +60,7 @@
   border-bottom: 1px solid #ccc;
 }
 
-/* -------------------------
-   カレンダー本体
-------------------------- */
+/* カレンダー本体 */
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -108,6 +101,16 @@
   background: #d7f7d7 !important;
 }
 
+/* 公休（薄いピンク） */
+.cell.bg-kokyu {
+  background: #f8bbd0 !important;
+}
+
+/* 遅出（薄い紫） */
+.cell.bg-osode {
+  background: #d1c4e9 !important;
+}
+
 /* 空白セル */
 .cell.empty {
   background: #f9f9f9;
@@ -118,9 +121,18 @@
   margin-bottom: 2px;
 }
 
-/* -------------------------
-   イベント表示
-------------------------- */
+/* 1000px以上でフォントサイズを少し大きく */
+@media (min-width: 1000px) {
+  .calendar-day-number {
+    font-size: 13px;
+  }
+  .event,
+  .event-note {
+    font-size: 12px;
+  }
+}
+
+/* イベント表示 */
 .event {
   font-size: 11px;
   position: absolute;
@@ -155,9 +167,7 @@
   right: 4px;
 }
 
-/* -------------------------
-   共通メモ欄
-------------------------- */
+/* 共通メモ欄 */
 .common-memo-box {
   margin-top: 20px;
   width: 100%;

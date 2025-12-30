@@ -19,7 +19,7 @@
 ================================ */
 .modal {
   background: white;
-  padding: 20px 22px 24px; /* 上下余白を少し狭めた */
+  padding: 20px 22px 24px;
   border-radius: 12px;
   width: 300px;
   box-sizing: border-box;
@@ -40,15 +40,12 @@
   margin-bottom: 12px;
 }
 
-/* 日付 */
 .modal-date {
   font-size: 18px;
   margin: 0;
 }
 
-/* ================================
-   削除ボタン（日付の右側）
-================================ */
+/* 削除ボタン */
 .delete-btn-top {
   background: #ff5252;
   color: white;
@@ -82,8 +79,17 @@
   flex: 1;
 }
 
+/* 公休 → 薄いピンク */
+.preset-btn:nth-child(3) {
+  background: #f8bbd0;
+}
+
+/* 遅出 → 薄い紫 */
+.preset-btn:nth-child(2) {
+  background: #d1c4e9;
+}
+
 .preset-btn.active {
-  background: #cce5ff;
   border-color: #5599dd;
   font-weight: bold;
 }
@@ -108,24 +114,22 @@
 }
 
 /* ================================
-   背景色ボタン（7色）
+   色ボタン（6色）
 ================================ */
 .color-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin: 14px 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .color-btn {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 4px;
   border: 1px solid #888;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .color-btn.selected {

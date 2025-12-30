@@ -56,14 +56,12 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     }
   };
 
-  // preset / text / color が変わるたびに自動保存
   useEffect(() => {
     const newEvents = {
       ...events,
       [date]: { preset, note: text, color },
     };
     saveToSupabase(newEvents);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, text, color]);
 
   const remove = async () => {
@@ -89,7 +87,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        {/* 上部：日付 + 削除ボタン（右側） */}
         <div className="modal-header">
           <h2 className="modal-date">{date}</h2>
           <button className="delete-btn-top" onClick={remove}>
@@ -118,16 +115,15 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 色ボタン 7 色（1色目をグレーに変更） */}
+        {/* 色ボタン（6色） */}
         <div className="color-buttons">
           {[
-            "#eeeeee", // 薄いグレー（今日の背景色と被らない）
-            "#fff9c4", // 薄黄
-            "#ffebee", // 薄赤
-            "#bbdefb", // 薄青
-            "#f8bbd0", // 薄ピンク
-            "#d1c4e9", // 薄紫
-            "#ffccbc", // 薄オレンジ
+            "#fff9c4", // 薄い黄色
+            "#ffccbc", // 薄いオレンジ
+            "#c8e6c9", // 薄い緑
+            "#ef5350", // 赤（薄くなくてよい）
+            "#eeeeee", // 薄いグレー（薄い緑の代わり）
+            "#ffebee", // 公休と同じ薄い赤
           ].map((col, i) => (
             <div
               key={i}
@@ -138,7 +134,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-        <div className="modal-hint">入力・選択内容は自動で保存されます</div>
+        <div className="modal-hint">
+          選択後は本画面外をタップまたはクリックしてください
+        </div>
       </div>
     </div>
   );

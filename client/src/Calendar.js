@@ -92,7 +92,7 @@ export default function Calendar({ userEmail, onLogout }) {
     loadMemo();
   }, []);
 
-  // 共通メモ：リアルタイム自動保存（300ms デバウンス）
+  // 共通メモ：自動保存（300ms）
   useEffect(() => {
     const timeout = setTimeout(async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -206,6 +206,14 @@ export default function Calendar({ userEmail, onLogout }) {
           if (holidayName) cellClass += " holiday";
           if (isToday) cellClass += " today";
 
+          // preset による背景色
+          if (event?.preset === "公休") {
+            cellClass += " bg-kokyu";
+          }
+          if (event?.preset === "遅出") {
+            cellClass += " bg-osode";
+          }
+
           const bgColor = event?.color || "";
 
           return (
@@ -262,4 +270,3 @@ export default function Calendar({ userEmail, onLogout }) {
     </div>
   );
 }
-
