@@ -170,10 +170,19 @@
 
 /* 共通メモ欄 */
 .common-memo-box {
-  margin-top: 20px;
-  width: calc(100% + 20px); /* 右側だけ広げる */
-  margin-right: -20px;      /* カレンダーの padding を打ち消す */
+  width: 100%;              /* ← カレンダーと同じ幅にする */
+  max-width: 1200px;         /* ← カレンダーの最大幅に合わせる（あなたのUIに合わせて調整） */
+  margin: 20px auto 0;      /* ← 中央揃え */
+  padding: 0 10px;          /* ← スマホでの余白 */
+  box-sizing: border-box;
 }
+
+.common-memo-textarea {
+  width: 100%;              /* ← 親に合わせてぴったり */
+  resize: vertical;
+  box-sizing: border-box;
+}
+
 
 .common-memo-box h3 {
   margin: 0 0 6px;

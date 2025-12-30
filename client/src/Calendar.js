@@ -214,16 +214,20 @@ export default function Calendar({ userEmail, onLogout }) {
             month === today.getMonth() &&
             day === today.getDate();
 
-          let cellClass = "cell";
+         let cellClass = "cell";
           if (weekdayIndex === 5) cellClass += " saturday";
           if (weekdayIndex === 6) cellClass += " sunday";
           if (holidayName) cellClass += " holiday";
           if (isToday) cellClass += " today";
 
-          if (event?.preset === "公休") cellClass += " bg-kokyu";
-          if (event?.preset === "遅出") cellClass += " bg-osode";
+          // 色が選ばれていないときだけ preset の背景を適用
+          if (!event?.color) {
+            if (event?.preset === "公休") cellClass += " bg-kokyu";
+            if (event?.preset === "遅出") cellClass += " bg-osode";
+          }
 
           const bgColor = event?.color || "";
+
 
           return (
             <div
