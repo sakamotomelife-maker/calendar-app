@@ -270,7 +270,7 @@ export default function Calendar({ userEmail, onLogout }) {
           rows={3}
         />
         <div className="memo-hint">※共通メモ欄は自動保存されます</div>
-        <div className="version">v1.0.3</div>
+        <div className="version">v1.0.4</div>
 
 
       </div>
