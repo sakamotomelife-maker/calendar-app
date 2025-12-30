@@ -233,14 +233,13 @@
   /* イベント文字を小さく（スマホ用が確実に勝つ） */
   .event {
     font-size: 8px;
-    bottom: 2px;
-    left: 2px;
-    right: 2px;
-    text-align: center;
+    bottom: 1px;
+    left: 0.5px;
+    right: 0.5px;
   }
 
   .event-note {
-    font-size: 8px;
+    font-size: 8.5px;
     bottom: 14px;
     line-height: 1.2;
     white-space: pre-wrap; /* ← 改行をそのまま表示 */
