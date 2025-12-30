@@ -182,6 +182,8 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
+          <div className="modal-hint">※2回選択すると取消操作</div>
+
       </div>
     </div>
   );

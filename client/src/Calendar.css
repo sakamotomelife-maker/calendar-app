@@ -4,6 +4,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 /* 上部（メールアドレス・ログアウト） */
@@ -98,8 +99,7 @@
 
 /* 今日（塗りつぶし → 青緑の外枠） */
 .cell.today {
-  border: 2px solid #26a69a !important; /* 青緑 */
-  /*background: white !important;*/
+  border: 2px solid #26a69a !important;
 }
 
 /* 公休（祝日と同じ色） */
@@ -135,8 +135,38 @@
 
 /* スマホ（横幅480px以下）だけ適用 */
 @media (max-width: 480px) {
-  .text-area-wrapper textarea {
+
+  /* 横スクロール防止 */
+  .calendar-wrapper {
+    padding: 10px;
+  }
+
+  /* セル縮小 */
+  .cell {
+    min-height: 60px;
+    padding: 2px;
+    font-size: 8px;
+  }
+
+  .calendar-day-number {
+    font-size: 10px;
+  }
+
+  /* イベント文字を小さく */
+  .event {
     font-size: 6px;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+  }
+
+  .event-note {
+    font-size: 6px;
+    bottom: 14px;
+  }
+
+  .weekday-cell {
+    padding: 4px 0;
   }
 }
 
@@ -177,10 +207,10 @@
 
 /* 共通メモ欄（カレンダーと完全に幅を揃える） */
 .common-memo-box {
-  max-width: 1200px;     /* ← カレンダーと同じ最大幅 */
-  width: 100%;           /* ← カレンダーと同じ可変幅 */
-  margin: 20px auto 0;   /* ← カレンダーと同じ中央寄せ */
-  padding: 0 0px;       /* ← カレンダーと同じ左右余白 */
+  max-width: 1200px;
+  width: 100%;
+  margin: 20px auto 0;
+  padding: 0 0px;
   box-sizing: border-box;
 }
 
@@ -190,7 +220,7 @@
   font-size: 14px;
 }
 
-/* テキストエリア（親幅にフィット） */
+/* テキストエリア */
 .common-memo-textarea {
   width: 100%;
   font-size: 12px;
