@@ -131,7 +131,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
 
           <div style={{ display: "flex", gap: "6px" }}>
             <button className="confirm-btn" onClick={onClose}>
-              決定
+              OK
             </button>
 
             <button className="delete-btn-top" onClick={remove}>
@@ -182,7 +182,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-          <div className="modal-hint">※2回選択すると取消操作</div>
+          <div className="modal-hint">※2回選択すると解除になります</div>
 
       </div>
     </div>
