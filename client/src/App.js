@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Login from "./Login";
 import Calendar from "./Calendar";
+import './App.css';
+
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
