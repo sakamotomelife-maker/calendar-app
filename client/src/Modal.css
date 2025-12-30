@@ -62,11 +62,11 @@
   background: #e04848;
 }
 
-/* 決定ボタン（薄い緑） */
+/* 決定ボタン*/
 .confirm-btn {
-  background: #c8e6c9; /* 薄い緑 */
-  color: #2e7d32;
-  border: 1px solid #81c784;
+  background: #92cf94; /* 薄い緑 */
+  color: #ffffff;
+  /*border: 1px solid #81c784;*/
   padding: 4px 10px;
   font-size: 12px;
   border-radius: 4px;

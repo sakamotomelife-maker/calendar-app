@@ -82,7 +82,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
      削除処理
   ----------------------------- */
   const remove = async () => {
-    if (!window.confirm("この日の予定を削除しますか？")) return;
+    if (!window.confirm("予定を削除しますか？")) return;
 
     const session = (await supabase.auth.getSession()).data.session;
     const user = session?.user;
@@ -145,7 +145,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="予定を入力"
+            placeholder="予定を入力してください"
           />
         </div>
 

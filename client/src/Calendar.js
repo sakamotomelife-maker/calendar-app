@@ -256,7 +256,7 @@ export default function Calendar({ userEmail, onLogout }) {
           onChange={(e) => setCommonMemo(e.target.value)}
           rows={3}
         />
-        <div className="memo-hint">入力すると自動保存されます</div>
+        <div className="memo-hint">※共通メモ欄は自動保存されます</div>
       </div>
 
       {/* モーダル */}

@@ -171,7 +171,8 @@
 /* 共通メモ欄 */
 .common-memo-box {
   margin-top: 20px;
-  width: 100%;
+  width: calc(100% + 20px); /* 右側だけ広げる */
+  margin-right: -20px;      /* カレンダーの padding を打ち消す */
 }
 
 .common-memo-box h3 {
@@ -194,4 +195,3 @@
   font-size: 11px;
   color: #777;
 }
-

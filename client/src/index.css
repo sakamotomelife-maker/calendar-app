@@ -64,7 +64,7 @@
   position: relative;
 }
 
-/* 「目＋表示 / 非表示」テキストボタン */
+/* 「表示 / 非表示」テキストボタン */
 .toggle-password-text {
   position: absolute;
   right: 8px;
