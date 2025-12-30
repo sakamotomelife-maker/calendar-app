@@ -136,7 +136,7 @@
 /* スマホ（横幅480px以下）だけ適用 */
 @media (max-width: 480px) {
   .text-area-wrapper textarea {
-    font-size: 8px;
+    font-size: 6px;
   }
 }
 
@@ -180,7 +180,7 @@
   max-width: 1200px;     /* ← カレンダーと同じ最大幅 */
   width: 100%;           /* ← カレンダーと同じ可変幅 */
   margin: 20px auto 0;   /* ← カレンダーと同じ中央寄せ */
-  padding: 0 5px;       /* ← カレンダーと同じ左右余白 */
+  padding: 0 0px;       /* ← カレンダーと同じ左右余白 */
   box-sizing: border-box;
 }
 
