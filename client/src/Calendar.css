@@ -135,6 +135,7 @@
 }
 
 .event-note {
+  margin-top: 14px;
   font-size: 11px;
   position: relative;
   white-space: pre-wrap; /* ← 改行をそのまま表示 */
@@ -246,8 +247,10 @@
   }
 
   .event-note {
+
     font-size: 9px;
-    bottom: 14px;
+    margin-top: 14px;
+    /* bottom: 14px; */
 
     left: 0.5px;
     right: 0.5px;
