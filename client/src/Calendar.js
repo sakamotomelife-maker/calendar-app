@@ -37,6 +37,7 @@ export default function Calendar({ userEmail, onLogout }) {
   function changeMonth(offset) {
     let newMonth = month + offset;
     let newYear = year;
+
     if (newMonth < 0) {
       newMonth = 11;
       newYear--;
@@ -44,6 +45,7 @@ export default function Calendar({ userEmail, onLogout }) {
       newMonth = 0;
       newYear++;
     }
+
     setMonth(newMonth);
     setYear(newYear);
   }
@@ -71,6 +73,7 @@ export default function Calendar({ userEmail, onLogout }) {
 
       setEvents(obj);
     };
+
     loadEvents();
   }, []);
 
@@ -89,10 +92,11 @@ export default function Calendar({ userEmail, onLogout }) {
 
       setCommonMemo(data?.memo || "");
     };
+
     loadMemo();
   }, []);
 
-  // 共通メモ：自動保存（300ms）
+  // 共通メモ：自動保存
   useEffect(() => {
     const timeout = setTimeout(async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -137,6 +141,7 @@ export default function Calendar({ userEmail, onLogout }) {
 
   return (
     <div className="calendar-wrapper">
+      {/* 上部バー */}
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
         <button className="logout-btn" onClick={handleLogout}>
@@ -206,13 +211,8 @@ export default function Calendar({ userEmail, onLogout }) {
           if (holidayName) cellClass += " holiday";
           if (isToday) cellClass += " today";
 
-          // preset による背景色
-          if (event?.preset === "公休") {
-            cellClass += " bg-kokyu";
-          }
-          if (event?.preset === "遅出") {
-            cellClass += " bg-osode";
-          }
+          if (event?.preset === "公休") cellClass += " bg-kokyu";
+          if (event?.preset === "遅出") cellClass += " bg-osode";
 
           const bgColor = event?.color || "";
 
@@ -227,9 +227,9 @@ export default function Calendar({ userEmail, onLogout }) {
 
               {holidayName && (
                 <div className="event preset-公休">
-                  {holidayName.length > 6
+                  {(holidayName.length > 6
                     ? holidayName.slice(0, 6) + "..."
-                    : holidayName}
+                    : holidayName)}
                 </div>
               )}
 
@@ -239,7 +239,9 @@ export default function Calendar({ userEmail, onLogout }) {
                 </div>
               )}
 
-              {event?.note && <div className="event-note">{event.note}</div>}
+              {event?.note && (
+                <div className="event-note">{event.note}</div>
+              )}
             </div>
           );
         })}
