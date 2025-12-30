@@ -61,7 +61,7 @@
 }
 
 /* ================================
-   プリセットボタン
+   プリセットボタン（早出・遅出・公休）
 ================================ */
 .btn-group {
   display: flex;
@@ -74,28 +74,22 @@
   font-size: 15px;
   border-radius: 6px;
   border: 1px solid #888;
-  background: #f0f0f0;
+  background: white; /* ← 塗りつぶしなし */
   cursor: pointer;
   flex: 1;
+  color: #333;
 }
 
-/* 公休 → 薄いピンク */
-.preset-btn:nth-child(3) {
-  background: #f8bbd0;
-}
-
-/* 遅出 → 薄い紫 */
-.preset-btn:nth-child(2) {
-  background: #d1c4e9;
-}
-
+/* 選択されたとき（青枠＋青文字） */
 .preset-btn.active {
-  border-color: #5599dd;
+  border-color: #0288d1;
+  color: #0288d1;
   font-weight: bold;
 }
 
+/* 日曜・祝日は disable */
 .preset-btn:disabled {
-  background: #ddd;
+  background: #eee;
   cursor: not-allowed;
 }
 

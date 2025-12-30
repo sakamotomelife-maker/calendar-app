@@ -20,7 +20,7 @@
   color: #555;
 }
 
-/* ログアウトボタンを小さく */
+/* ログアウトボタン */
 .logout-btn {
   padding: 3px 7px;
   font-size: 9px;
@@ -101,14 +101,14 @@
   background: #d7f7d7 !important;
 }
 
-/* 公休（薄いピンク） */
+/* 公休（祝日と同じ色） */
 .cell.bg-kokyu {
-  background: #f8bbd0 !important;
+  background: #ffebee !important;
 }
 
 /* 遅出（薄い紫） */
 .cell.bg-osode {
-  background: #d1c4e9 !important;
+  background: #ede7f6 !important;
 }
 
 /* 空白セル */
