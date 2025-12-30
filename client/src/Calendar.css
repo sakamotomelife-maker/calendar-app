@@ -132,6 +132,12 @@
     font-size: 12px;
   }
 }
+/* スマホ（横幅480px以下）だけ適用 */
+@media (max-width: 480px) {
+  .text-area-wrapper textarea {
+    font-size: 8px;
+  }
+}
 
 /* イベント表示 */
 .event {
@@ -168,27 +174,22 @@
   right: 4px;
 }
 
-/* 共通メモ欄 */
+/* 共通メモ欄（カレンダーと完全に幅を揃える） */
 .common-memo-box {
-  width: 100%;              /* ← カレンダーと同じ幅にする */
-  max-width: 1200px;         /* ← カレンダーの最大幅に合わせる（あなたのUIに合わせて調整） */
-  margin: 20px auto 0;      /* ← 中央揃え */
-  padding: 0 10px;          /* ← スマホでの余白 */
+  max-width: 1200px;     /* ← カレンダーと同じ最大幅 */
+  width: 100%;           /* ← カレンダーと同じ可変幅 */
+  margin: 20px auto 0;   /* ← カレンダーと同じ中央寄せ */
+  padding: 0 20px;       /* ← カレンダーと同じ左右余白 */
   box-sizing: border-box;
 }
 
-.common-memo-textarea {
-  width: 100%;              /* ← 親に合わせてぴったり */
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-
+/* 見出し */
 .common-memo-box h3 {
   margin: 0 0 6px;
   font-size: 14px;
 }
 
+/* テキストエリア（親幅にフィット） */
 .common-memo-textarea {
   width: 100%;
   font-size: 12px;
@@ -197,8 +198,10 @@
   border: 1px solid #aaa;
   resize: vertical;
   min-height: 60px;
+  box-sizing: border-box;
 }
 
+/* ヒント */
 .memo-hint {
   margin-top: 4px;
   font-size: 11px;
