@@ -101,13 +101,13 @@ export default function Login({ onLogin }) {
               checked={rememberEmail}
               onChange={(e) => setRememberEmail(e.target.checked)}
             />
-            メールアドレスを保存する
+            メールアドレスを保持
           </label>
         </div>
 
         <div className="login-btn-wrapper">
           <button type="submit" className="login-btn">
-            ログイン認証
+            ログイン
           </button>
         </div>
       </form>
