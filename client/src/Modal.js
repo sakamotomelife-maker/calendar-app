@@ -20,22 +20,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   const disabledPreset = isSunday || isHoliday;
 
   /* -----------------------------
-     プリセット選択 → 即閉じる
-  ----------------------------- */
-  const togglePreset = (value) => {
-    setPreset((prev) => (prev === value ? "" : value));
-    onClose();
-  };
-
-  /* -----------------------------
-     色選択 → 即閉じる
-  ----------------------------- */
-  const toggleColor = (value) => {
-    setColor((prev) => (prev === value ? "" : value));
-    onClose();
-  };
-
-  /* -----------------------------
      Supabase 保存処理
   ----------------------------- */
   const saveToSupabase = async (newEvents) => {
@@ -68,15 +52,51 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   /* -----------------------------
-     preset / text / color が変わるたび保存
+     プリセット選択 → 保存して閉じる
   ----------------------------- */
-  useEffect(() => {
+  const togglePreset = async (value) => {
+    const newPreset = preset === value ? "" : value;
+    setPreset(newPreset);
+
     const newEvents = {
       ...events,
-      [date]: { preset, note: text, color },
+      [date]: { preset: newPreset, note: text, color },
     };
-    saveToSupabase(newEvents);
-  }, [preset, text, color]);
+
+    await saveToSupabase(newEvents);
+    onClose();
+  };
+
+  /* -----------------------------
+     色選択 → 保存して閉じる
+  ----------------------------- */
+  const toggleColor = async (value) => {
+    const newColor = color === value ? "" : value;
+    setColor(newColor);
+
+    const newEvents = {
+      ...events,
+      [date]: { preset, note: text, color: newColor },
+    };
+
+    await saveToSupabase(newEvents);
+    onClose();
+  };
+
+  /* -----------------------------
+     テキスト入力は自動保存（閉じない）
+  ----------------------------- */
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const newEvents = {
+        ...events,
+        [date]: { preset, note: text, color },
+      };
+      saveToSupabase(newEvents);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [text]);
 
   /* -----------------------------
      削除処理
@@ -105,9 +125,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         
-        {/* -----------------------------
-            ヘッダー（決定 + 削除）
-        ----------------------------- */}
+        {/* ヘッダー */}
         <div className="modal-header">
           <h2 className="modal-date">{date}</h2>
 
@@ -122,9 +140,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           </div>
         </div>
 
-        {/* -----------------------------
-            プリセットボタン
-        ----------------------------- */}
+        {/* プリセット */}
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
             <button
@@ -138,9 +154,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-        {/* -----------------------------
-            テキストエリア
-        ----------------------------- */}
+        {/* テキスト */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -149,17 +163,15 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* -----------------------------
-            色ボタン（6色）
-        ----------------------------- */}
+        {/* 色選択 */}
         <div className="color-buttons">
           {[
-            "#fff9c4", // 薄い黄色
-            "#ffccbc", // 薄いオレンジ
-            "#c8e6c9", // 薄い緑
-            "#ef5350", // 赤
-            "#eeeeee", // 薄いグレー
-            "#ffebee", // 公休と同じ薄い赤
+            "#fff9c4",
+            "#ffccbc",
+            "#c8e6c9",
+            "#ef5350",
+            "#eeeeee",
+            "#ffebee",
           ].map((col, i) => (
             <div
               key={i}
