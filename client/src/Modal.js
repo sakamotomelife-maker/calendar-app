@@ -19,14 +19,25 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   const isHoliday = holidays && holidays[date] !== undefined;
   const disabledPreset = isSunday || isHoliday;
 
+  /* -----------------------------
+     プリセット選択 → 即閉じる
+  ----------------------------- */
   const togglePreset = (value) => {
     setPreset((prev) => (prev === value ? "" : value));
+    onClose();
   };
 
+  /* -----------------------------
+     色選択 → 即閉じる
+  ----------------------------- */
   const toggleColor = (value) => {
     setColor((prev) => (prev === value ? "" : value));
+    onClose();
   };
 
+  /* -----------------------------
+     Supabase 保存処理
+  ----------------------------- */
   const saveToSupabase = async (newEvents) => {
     setEvents(newEvents);
 
@@ -56,6 +67,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     }
   };
 
+  /* -----------------------------
+     preset / text / color が変わるたび保存
+  ----------------------------- */
   useEffect(() => {
     const newEvents = {
       ...events,
@@ -64,6 +78,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     saveToSupabase(newEvents);
   }, [preset, text, color]);
 
+  /* -----------------------------
+     削除処理
+  ----------------------------- */
   const remove = async () => {
     if (!window.confirm("この日の予定を削除しますか？")) return;
 
@@ -87,13 +104,27 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
+        
+        {/* -----------------------------
+            ヘッダー（決定 + 削除）
+        ----------------------------- */}
         <div className="modal-header">
           <h2 className="modal-date">{date}</h2>
-          <button className="delete-btn-top" onClick={remove}>
-            削除
-          </button>
+
+          <div style={{ display: "flex", gap: "6px" }}>
+            <button className="confirm-btn" onClick={onClose}>
+              決定
+            </button>
+
+            <button className="delete-btn-top" onClick={remove}>
+              削除
+            </button>
+          </div>
         </div>
 
+        {/* -----------------------------
+            プリセットボタン
+        ----------------------------- */}
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
             <button
@@ -107,6 +138,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
+        {/* -----------------------------
+            テキストエリア
+        ----------------------------- */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -115,14 +149,16 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 色ボタン（6色） */}
+        {/* -----------------------------
+            色ボタン（6色）
+        ----------------------------- */}
         <div className="color-buttons">
           {[
             "#fff9c4", // 薄い黄色
             "#ffccbc", // 薄いオレンジ
             "#c8e6c9", // 薄い緑
-            "#ef5350", // 赤（薄くなくてよい）
-            "#eeeeee", // 薄いグレー（薄い緑の代わり）
+            "#ef5350", // 赤
+            "#eeeeee", // 薄いグレー
             "#ffebee", // 公休と同じ薄い赤
           ].map((col, i) => (
             <div
@@ -134,9 +170,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           ))}
         </div>
 
-        <div className="modal-hint">
-          選択後は本画面外をタップまたはクリックしてください
-        </div>
       </div>
     </div>
   );

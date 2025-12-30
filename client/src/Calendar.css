@@ -96,9 +96,10 @@
   background: #ffebee !important;
 }
 
-/* 今日 */
+/* 今日（塗りつぶし → 青緑の外枠） */
 .cell.today {
-  background: #d7f7d7 !important;
+  border: 2px solid #26a69a !important; /* 青緑 */
+  background: white !important;
 }
 
 /* 公休（祝日と同じ色） */
@@ -193,3 +194,4 @@
   font-size: 11px;
   color: #777;
 }
+

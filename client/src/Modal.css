@@ -32,7 +32,9 @@
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* ヘッダー（日付 + 削除ボタン） */
+/* ================================
+   ヘッダー（日付 + 削除 + 決定）
+================================ */
 .modal-header {
   display: flex;
   align-items: center;
@@ -58,6 +60,22 @@
 
 .delete-btn-top:hover {
   background: #e04848;
+}
+
+/* 決定ボタン（薄い緑） */
+.confirm-btn {
+  background: #c8e6c9; /* 薄い緑 */
+  color: #2e7d32;
+  border: 1px solid #81c784;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.confirm-btn:hover {
+  background: #b2dfdb;
 }
 
 /* ================================
