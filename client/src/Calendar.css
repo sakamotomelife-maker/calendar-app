@@ -221,7 +221,7 @@
 
   /* セル縮小 */
   .cell {
-    min-height: 75px;
+    min-height: 80px;
     padding: 2px;
     font-size: 8px;
   }
@@ -236,11 +236,15 @@
     bottom: 2px;
     left: 2px;
     right: 2px;
+    font-weight: 300;
   }
 
   .event-note {
     font-size: 8px;
     bottom: 14px;
+    line-height: 1.2;
+    font-weight: 300;
+    white-space: pre-wrap; /* ← 改行をそのまま表示 */
   }
 
   .weekday-cell {
