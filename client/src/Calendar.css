@@ -99,7 +99,7 @@
 /* 今日（塗りつぶし → 青緑の外枠） */
 .cell.today {
   border: 2px solid #26a69a !important; /* 青緑 */
-  background: white !important;
+  /*background: white !important;*/
 }
 
 /* 公休（祝日と同じ色） */
@@ -179,7 +179,7 @@
   max-width: 1200px;     /* ← カレンダーと同じ最大幅 */
   width: 100%;           /* ← カレンダーと同じ可変幅 */
   margin: 20px auto 0;   /* ← カレンダーと同じ中央寄せ */
-  padding: 0 20px;       /* ← カレンダーと同じ左右余白 */
+  padding: 0 10px;       /* ← カレンダーと同じ左右余白 */
   box-sizing: border-box;
 }
 
