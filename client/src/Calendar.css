@@ -136,10 +136,16 @@
 
 .event-note {
   font-size: 11px;
-  position: absolute;
+  position: relative;
+  white-space: pre-wrap; /* ← 改行をそのまま表示 */
   bottom: 18px;
   left: 4px;
   right: 4px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 5; /* ← 表示する行数（調整可） */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .preset-公休 {
@@ -165,6 +171,10 @@
   .event,
   .event-note {
     font-size: 12px;
+    .cell {
+    min-height: 100px; /* ← PCだけ大きくする */
+    padding: 6px;      /* ← 余白も少し広げると綺麗 */
+    font-size: 13px;   /* ← 文字も少し大きく */
   }
 }
 
@@ -241,8 +251,7 @@
   .event-note {
     font-size: 8.5px;
     bottom: 14px;
-    line-height: 1.2;
-    white-space: pre-wrap; /* ← 改行をそのまま表示 */
+
     left: 0.5px;
     right: 0.5px;
   }
