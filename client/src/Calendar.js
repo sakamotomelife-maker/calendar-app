@@ -50,7 +50,9 @@ export default function Calendar({ userEmail, onLogout }) {
     setYear(newYear);
   }
 
-  // 予定読み込み
+  /* -----------------------------
+     予定読み込み
+  ----------------------------- */
   useEffect(() => {
     const loadEvents = async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -77,7 +79,9 @@ export default function Calendar({ userEmail, onLogout }) {
     loadEvents();
   }, []);
 
-  // 共通メモ読み込み
+  /* -----------------------------
+     共通メモ読み込み
+  ----------------------------- */
   useEffect(() => {
     const loadMemo = async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -96,7 +100,9 @@ export default function Calendar({ userEmail, onLogout }) {
     loadMemo();
   }, []);
 
-  // 共通メモ：自動保存
+  /* -----------------------------
+     共通メモ：自動保存（300ms デバウンス）
+  ----------------------------- */
   useEffect(() => {
     const timeout = setTimeout(async () => {
       const session = (await supabase.auth.getSession()).data.session;
@@ -110,10 +116,11 @@ export default function Calendar({ userEmail, onLogout }) {
         .maybeSingle();
 
       if (existing) {
+        // ← ここが重要：id で UPDATE する
         await supabase
           .from("common_memo")
           .update({ memo: commonMemo })
-          .eq("user_id", user.id);
+          .eq("id", existing.id);
       } else {
         await supabase.from("common_memo").insert({
           user_id: user.id,
@@ -125,7 +132,9 @@ export default function Calendar({ userEmail, onLogout }) {
     return () => clearTimeout(timeout);
   }, [commonMemo]);
 
-  // 祝日読み込み
+  /* -----------------------------
+     祝日読み込み
+  ----------------------------- */
   useEffect(() => {
     fetch("https://holidays-jp.github.io/api/v1/date.json")
       .then((res) => res.json())
