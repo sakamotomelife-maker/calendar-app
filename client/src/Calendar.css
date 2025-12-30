@@ -1,6 +1,7 @@
 /* 最大幅を設定して中央寄せ */
 .calendar-wrapper {
-  max-width: 900px;
+  max-width: 800px; /* 900px から少し狭める */
+  width: 100%;
   margin: 0 auto;
   padding: 20px;
 }
@@ -182,4 +183,3 @@
   font-size: 11px;
   color: #777;
 }
-

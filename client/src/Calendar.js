@@ -37,8 +37,13 @@ export default function Calendar({ userEmail, onLogout }) {
   function changeMonth(offset) {
     let newMonth = month + offset;
     let newYear = year;
-    if (newMonth < 0) { newMonth = 11; newYear--; }
-    else if (newMonth > 11) { newMonth = 0; newYear++; }
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
+    } else if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
+    }
     setMonth(newMonth);
     setYear(newYear);
   }
@@ -134,7 +139,9 @@ export default function Calendar({ userEmail, onLogout }) {
     <div className="calendar-wrapper">
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
-        <button className="logout-btn" onClick={handleLogout}>ログアウト</button>
+        <button className="logout-btn" onClick={handleLogout}>
+          ログアウト
+        </button>
       </div>
 
       {/* 年月 */}
@@ -144,14 +151,18 @@ export default function Calendar({ userEmail, onLogout }) {
         <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
           {Array.from({ length: 20 }, (_, i) => today.getFullYear() - 10 + i).map(
             (y) => (
-              <option key={y} value={y}>{y}年</option>
+              <option key={y} value={y}>
+                {y}年
+              </option>
             )
           )}
         </select>
 
         <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
-            <option key={i} value={i}>{i + 1}月</option>
+            <option key={i} value={i}>
+              {i + 1}月
+            </option>
           ))}
         </select>
 
@@ -161,7 +172,9 @@ export default function Calendar({ userEmail, onLogout }) {
       {/* 曜日 */}
       <div className="weekday-row">
         {weekdays.map((w) => (
-          <div key={w} className="weekday-cell">{w}</div>
+          <div key={w} className="weekday-cell">
+            {w}
+          </div>
         ))}
       </div>
 
@@ -218,9 +231,7 @@ export default function Calendar({ userEmail, onLogout }) {
                 </div>
               )}
 
-              {event?.note && (
-                <div className="event-note">{event.note}</div>
-              )}
+              {event?.note && <div className="event-note">{event.note}</div>}
             </div>
           );
         })}
@@ -235,9 +246,7 @@ export default function Calendar({ userEmail, onLogout }) {
           onChange={(e) => setCommonMemo(e.target.value)}
           rows={3}
         />
-        <div className="memo-hint">
-          入力すると自動保存されます
-        </div>
+        <div className="memo-hint">入力すると自動保存されます</div>
       </div>
 
       {/* モーダル */}

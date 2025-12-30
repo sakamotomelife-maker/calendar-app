@@ -49,7 +49,9 @@ export default function Login({ onLogin }) {
     // セッションが本当に存在するか確認
     const session = (await supabase.auth.getSession()).data.session;
     if (!session) {
-      setError("ログインセッションの取得に失敗しました。もう一度お試しください。");
+      setError(
+        "ログインセッションの取得に失敗しました。もう一度お試しください。"
+      );
       return;
     }
 
@@ -88,8 +90,9 @@ export default function Login({ onLogin }) {
                 type="button"
                 className="toggle-password-text"
                 onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "パスワードを非表示" : "パスワードを表示"}
               >
-                {showPassword ? "非表示" : "表示"}
+                {showPassword ? "👁 非表示" : "👁 表示"}
               </button>
             </div>
           </div>

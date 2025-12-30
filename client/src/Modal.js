@@ -50,21 +50,20 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       .maybeSingle();
 
     if (existing) {
-      await supabase
-        .from("events")
-        .update(payload)
-        .eq("id", existing.id);
+      await supabase.from("events").update(payload).eq("id", existing.id);
     } else {
       await supabase.from("events").insert(payload);
     }
   };
 
+  // preset / text / color が変わるたびに自動保存
   useEffect(() => {
     const newEvents = {
       ...events,
       [date]: { preset, note: text, color },
     };
     saveToSupabase(newEvents);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, text, color]);
 
   const remove = async () => {
@@ -90,11 +89,13 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-
-        {/* 削除ボタン（右上） */}
-        <button className="delete-btn-top" onClick={remove}>削除</button>
-
-        <h2 className="modal-date">{date}</h2>
+        {/* 上部：日付 + 削除ボタン（右側） */}
+        <div className="modal-header">
+          <h2 className="modal-date">{date}</h2>
+          <button className="delete-btn-top" onClick={remove}>
+            削除
+          </button>
+        </div>
 
         <div className="btn-group">
           {["早出", "遅出", "公休"].map((label) => (
@@ -117,16 +118,16 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 色ボタン 7 色 */}
+        {/* 色ボタン 7 色（1色目をグレーに変更） */}
         <div className="color-buttons">
           {[
-            "#c8e6c9", // 薄緑（今日と被らないよう少し濃く）
+            "#eeeeee", // 薄いグレー（今日の背景色と被らない）
             "#fff9c4", // 薄黄
             "#ffebee", // 薄赤
-            "#bbdefb", // 薄青（追加）
-            "#f8bbd0", // 薄ピンク（追加）
-            "#d1c4e9", // 薄紫（追加）
-            "#ffccbc", // 薄オレンジ（追加）
+            "#bbdefb", // 薄青
+            "#f8bbd0", // 薄ピンク
+            "#d1c4e9", // 薄紫
+            "#ffccbc", // 薄オレンジ
           ].map((col, i) => (
             <div
               key={i}
@@ -135,4 +136,10 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
               onClick={() => toggleColor(col)}
             />
           ))}
+        </div>
 
+        <div className="modal-hint">入力・選択内容は自動で保存されます</div>
+      </div>
+    </div>
+  );
+}
