@@ -1,4 +1,4 @@
-/* 最大幅を1200pxに拡大 */
+/* 全体ラッパー */
 .calendar-wrapper {
   max-width: 1200px;
   width: 100%;
@@ -8,11 +8,19 @@
   position: relative;
 }
 
-/* 右上固定の設定ボタン */
-.settings-fixed-btn {
+/* 右上：メールアドレス + 設定ボタン（1行固定） */
+.top-right-bar {
   position: absolute;
   top: 10px;
   right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* 設定ボタン */
+.settings-fixed-btn {
   padding: 6px 12px;
   font-size: 12px;
   cursor: pointer;
@@ -20,18 +28,9 @@
   border: 1px solid #90caf9;
   border-radius: 6px;
   font-weight: bold;
-  z-index: 1000;
 }
 
-/* 上部（メールアドレス） */
-.calendar-top-bar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
+/* メールアドレス */
 .user-email {
   font-size: 12px;
   color: #555;
@@ -44,6 +43,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 10px;
+  margin-top: 30px; /* 上のバーと被らないように余白 */
 }
 
 .calendar-header select,
@@ -257,5 +257,20 @@
 
   .weekday-cell {
     padding: 4px 0;
+  }
+
+  .top-right-bar {
+    top: 6px;
+    right: 6px;
+    gap: 4px;
+  }
+
+  .user-email {
+    font-size: 10px;
+  }
+
+  .settings-fixed-btn {
+    padding: 4px 8px;
+    font-size: 10px;
   }
 }

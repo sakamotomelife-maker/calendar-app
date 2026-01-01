@@ -64,15 +64,20 @@ export default function Modal({
     const user = session?.user;
     if (!user) return;
 
-    const start_time =
-      mode === "timeRange" && startHour && startMin
-        ? `${startHour}:${startMin}`
-        : null;
+    // start_time / end_time を組み立て（分が空なら "00"）
+    let start_time = null;
+    let end_time = null;
 
-    const end_time =
-      mode === "timeRange" && endHour && endMin
-        ? `${endHour}:${endMin}`
-        : null;
+    if (mode === "timeRange") {
+      if (startHour) {
+        const m = startMin || "00";
+        start_time = `${startHour}:${m}`;
+      }
+      if (endHour) {
+        const m = endMin || "00";
+        end_time = `${endHour}:${m}`;
+      }
+    }
 
     const payload = {
       user_id: user.id,
@@ -100,7 +105,7 @@ export default function Modal({
   };
 
   /* -----------------------------
-     プリセット選択 → 保存して閉じる
+     プリセット選択 → 即保存して閉じる
   ----------------------------- */
   const togglePreset = async (value) => {
     const newPreset = preset === value ? "" : value;
@@ -127,7 +132,7 @@ export default function Modal({
   };
 
   /* -----------------------------
-     色選択 → 保存して閉じる
+     色選択 → 即保存して閉じる
   ----------------------------- */
   const toggleColor = async (value) => {
     const newColor = color === value ? "" : value;
@@ -170,32 +175,65 @@ export default function Modal({
   }, [text]);
 
   /* -----------------------------
-     時間帯モード → OK で保存
+     時刻変更 → 即保存
   ----------------------------- */
-  const saveTimeRange = async () => {
-    const start_time =
-      startHour && startMin ? `${startHour}:${startMin}` : null;
-    const end_time = endHour && endMin ? `${endHour}:${endMin}` : null;
+  useEffect(() => {
+    if (mode !== "timeRange") return;
 
-    const newEvents = {
-      ...events,
-      [date]: {
+    const update = async () => {
+      let start_time = null;
+      let end_time = null;
+
+      if (startHour) {
+        const m = startMin || "00";
+        start_time = `${startHour}:${m}`;
+      }
+      if (endHour) {
+        const m = endMin || "00";
+        end_time = `${endHour}:${m}`;
+      }
+
+      const newEvents = {
+        ...events,
+        [date]: {
+          preset: "",
+          note: text,
+          color,
+          start_time,
+          end_time,
+        },
+      };
+
+      await saveToSupabase(newEvents, {
         preset: "",
-        note: text,
-        color,
         start_time,
         end_time,
-      },
+      });
     };
 
-    await saveToSupabase(newEvents, {
-      preset: "",
-      start_time,
-      end_time,
-    });
+    // 何も選ばれていない状態（全空）のときも保存して祝日復活させる
+    if (!startHour && !startMin && !endHour && !endMin) {
+      const newEvents = {
+        ...events,
+        [date]: {
+          preset: "",
+          note: text,
+          color,
+          start_time: null,
+          end_time: null,
+        },
+      };
+      saveToSupabase(newEvents, {
+        preset: "",
+        start_time: null,
+        end_time: null,
+      });
+      return;
+    }
 
-    onClose();
-  };
+    update();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startHour, startMin, endHour, endMin]);
 
   /* -----------------------------
      削除
@@ -231,8 +269,8 @@ export default function Modal({
             <button
               className="confirm-btn"
               onClick={() => {
-                if (mode === "timeRange") saveTimeRange();
-                else onClose();
+                // OK は閉じるだけ（保存はリアルタイム）
+                onClose();
               }}
             >
               OK
@@ -264,7 +302,6 @@ export default function Modal({
         {mode === "timeRange" && (
           <div className="time-range-block">
             <div className="time-range-row">
-
               {/* ▼ 開始：時 */}
               <select
                 className="time-select"
@@ -326,7 +363,6 @@ export default function Modal({
                   </option>
                 ))}
               </select>
-
             </div>
           </div>
         )}

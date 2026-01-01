@@ -119,6 +119,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: nowrap; /* 常に1行 */
 }
 
 /* 時・分のプルダウン（最小幅） */

@@ -18,10 +18,8 @@ export default function Calendar({ userEmail, onLogout }) {
   const [holidays, setHolidays] = useState({});
   const [commonMemo, setCommonMemo] = useState("");
 
-  // 設定モーダル
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  // 登録モード
   const [registerMode, setRegisterMode] = useState(
     localStorage.getItem("registerMode") || "preset"
   );
@@ -163,35 +161,38 @@ export default function Calendar({ userEmail, onLogout }) {
   };
 
   /* -----------------------------
-     時間帯の短縮表示（スマホ用）
+     時間帯の表示加工
   ----------------------------- */
-  const formatTimeRange = (start, end) => {
-    if (!start || !end) return null;
+  const formatTimeRangeDisplay = (start, end) => {
+    if (!start && !end) return null;
 
-    const isMobile = window.innerWidth <= 480;
+    const formatShort = (t) => {
+      if (!t) return "";
+      const [h, m] = t.split(":");
+      if (m === "00") return h; // 10:00 → 10
+      return `${h}:${m}`;       // 10:15 → 10:15
+    };
 
-    if (!isMobile) return `${start}-${end}`;
+    const s = formatShort(start);
+    const e = formatShort(end);
 
-    const s = start.replace(":00", "");
-    const e = end.replace(":00", "");
-
-    return `${s}-${e}`;
+    if (s && e) return `${s}-${e}`;
+    if (s && !e) return `${s}-`;
+    if (!s && e) return `-${e}`;
+    return null;
   };
 
   return (
     <div className="calendar-wrapper">
-
-      {/* ▼ 右上固定の設定ボタン */}
-      <button
-        className="settings-fixed-btn"
-        onClick={() => setSettingsOpen(true)}
-      >
-        設定
-      </button>
-
-      {/* 上部バー */}
-      <div className="calendar-top-bar">
+      {/* 右上：メールアドレス + 設定ボタン（1行固定） */}
+      <div className="top-right-bar">
         <span className="user-email">{userEmail}</span>
+        <button
+          className="settings-fixed-btn"
+          onClick={() => setSettingsOpen(true)}
+        >
+          設定
+        </button>
       </div>
 
       {/* 年月 */}
@@ -263,10 +264,18 @@ export default function Calendar({ userEmail, onLogout }) {
 
           const bgColor = event?.color || "";
 
-          const timeRange =
-            event?.start_time && event?.end_time
-              ? formatTimeRange(event.start_time, event.end_time)
-              : null;
+          // 祝日名を表示するかどうか
+          const hasPreset = !!event?.preset;
+          const hasStart = !!event?.start_time;
+          const hasEnd = !!event?.end_time;
+
+          const shouldShowHoliday =
+            holidayName && !hasPreset && !hasStart && !hasEnd;
+
+          const timeRangeDisplay = formatTimeRangeDisplay(
+            event?.start_time,
+            event?.end_time
+          );
 
           return (
             <div
@@ -277,7 +286,7 @@ export default function Calendar({ userEmail, onLogout }) {
             >
               <div className="calendar-day-number">{day}</div>
 
-              {holidayName && (
+              {shouldShowHoliday && (
                 <div className="event preset-公休">
                   {holidayName.length > 6
                     ? holidayName.slice(0, 6) + "..."
@@ -285,11 +294,11 @@ export default function Calendar({ userEmail, onLogout }) {
                 </div>
               )}
 
-              {timeRange && (
-                <div className="event time-range">{timeRange}</div>
+              {timeRangeDisplay && (
+                <div className="event time-range">{timeRangeDisplay}</div>
               )}
 
-              {event?.preset && !timeRange && (
+              {event?.preset && !timeRangeDisplay && (
                 <div className={`event preset-${event.preset}`}>
                   {event.preset}
                 </div>
@@ -316,7 +325,7 @@ export default function Calendar({ userEmail, onLogout }) {
         <div className="version">v1.1.0</div>
       </div>
 
-      {/* ▼ 設定モーダル */}
+      {/* 設定モーダル */}
       {settingsOpen && (
         <div className="modal-bg" onClick={() => setSettingsOpen(false)}>
           <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
@@ -349,7 +358,7 @@ export default function Calendar({ userEmail, onLogout }) {
         </div>
       )}
 
-      {/* ▼ シフト編集モーダル */}
+      {/* シフト編集モーダル */}
       {selectedDate && (
         <Modal
           date={selectedDate}
