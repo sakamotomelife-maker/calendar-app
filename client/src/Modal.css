@@ -109,25 +109,33 @@
 }
 
 /* ================================
-   時間帯入力
+   時間帯（1行レイアウト）
 ================================ */
 .time-range-block {
   margin-bottom: 12px;
 }
 
-.time-input-row {
+.time-range-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
 }
 
-.time-input-row select {
-  flex: 1;
-  padding: 6px;
+/* 時・分のプルダウン（最小幅） */
+.time-select {
+  width: 48px;
+  padding: 4px;
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #aaa;
+  text-align: center;
+}
+
+/* 記号（：と〜） */
+.time-symbol {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
 }
 
 /* ================================
@@ -186,14 +194,14 @@
   border-radius: 12px;
   width: 260px;
   box-sizing: border-box;
-  text-align: left; /* ← 左揃え */
+  text-align: left;
 }
 
 .settings-modal h3 {
   margin-top: 0;
   margin-bottom: 12px;
   font-size: 16px;
-  text-align: left; /* ← 左揃え */
+  text-align: left;
 }
 
 .settings-btn {

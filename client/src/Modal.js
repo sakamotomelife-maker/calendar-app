@@ -7,10 +7,10 @@ const supabase = createClient(
   process.env.REACT_APP_SUPABASE_ANON_KEY
 );
 
-// ▼ 時間生成（7:00〜20:00）
-const START_HOURS = Array.from({ length: 14 }, (_, i) => 7 + i); // 7〜20
-// ▼ 時間生成（12:00〜22:00）
-const END_HOURS = Array.from({ length: 11 }, (_, i) => 12 + i); // 12〜22
+// ▼ 開始：7〜20
+const START_HOURS = Array.from({ length: 14 }, (_, i) => 7 + i);
+// ▼ 終了：12〜22
+const END_HOURS = Array.from({ length: 11 }, (_, i) => 12 + i);
 
 const MINUTES = ["00", "15", "30", "45"];
 
@@ -30,12 +30,11 @@ export default function Modal({
     end_time: null,
   };
 
-  // ▼ 初期値は空白
   const [preset, setPreset] = useState(current.preset);
   const [text, setText] = useState(current.note);
   const [color, setColor] = useState(current.color || "");
 
-  // ▼ 時・分を分離して管理
+  // ▼ 時・分を分離して管理（初期値は空白）
   const [startHour, setStartHour] = useState(
     current.start_time ? current.start_time.split(":")[0] : ""
   );
@@ -261,12 +260,14 @@ export default function Modal({
           </div>
         )}
 
-        {/* ▼ 時間帯モード */}
+        {/* ▼ 時間帯モード（1行レイアウト） */}
         {mode === "timeRange" && (
           <div className="time-range-block">
-            <div className="time-input-row">
+            <div className="time-range-row">
+
               {/* ▼ 開始：時 */}
               <select
+                className="time-select"
                 value={startHour}
                 onChange={(e) => setStartHour(e.target.value)}
               >
@@ -278,8 +279,11 @@ export default function Modal({
                 ))}
               </select>
 
+              <span className="time-symbol">：</span>
+
               {/* ▼ 開始：分 */}
               <select
+                className="time-select"
                 value={startMin}
                 onChange={(e) => setStartMin(e.target.value)}
               >
@@ -290,11 +294,12 @@ export default function Modal({
                   </option>
                 ))}
               </select>
-            </div>
 
-            <div className="time-input-row">
+              <span className="time-symbol">〜</span>
+
               {/* ▼ 終了：時 */}
               <select
+                className="time-select"
                 value={endHour}
                 onChange={(e) => setEndHour(e.target.value)}
               >
@@ -306,8 +311,11 @@ export default function Modal({
                 ))}
               </select>
 
+              <span className="time-symbol">：</span>
+
               {/* ▼ 終了：分 */}
               <select
+                className="time-select"
                 value={endMin}
                 onChange={(e) => setEndMin(e.target.value)}
               >
@@ -318,6 +326,7 @@ export default function Modal({
                   </option>
                 ))}
               </select>
+
             </div>
           </div>
         )}
