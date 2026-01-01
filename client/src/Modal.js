@@ -7,20 +7,12 @@ const supabase = createClient(
   process.env.REACT_APP_SUPABASE_ANON_KEY
 );
 
-// ▼ 5:00〜23:00 を 15分刻みで生成
-const generateTimeOptions = () => {
-  const times = [];
-  for (let h = 5; h <= 23; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      const hh = String(h).padStart(2, "0");
-      const mm = String(m).padStart(2, "0");
-      times.push(`${hh}:${mm}`);
-    }
-  }
-  return times;
-};
+// ▼ 時間生成（7:00〜20:00）
+const START_HOURS = Array.from({ length: 14 }, (_, i) => 7 + i); // 7〜20
+// ▼ 時間生成（12:00〜22:00）
+const END_HOURS = Array.from({ length: 11 }, (_, i) => 12 + i); // 12〜22
 
-const TIME_OPTIONS = generateTimeOptions();
+const MINUTES = ["00", "15", "30", "45"];
 
 export default function Modal({
   date,
@@ -42,8 +34,21 @@ export default function Modal({
   const [preset, setPreset] = useState(current.preset);
   const [text, setText] = useState(current.note);
   const [color, setColor] = useState(current.color || "");
-  const [startTime, setStartTime] = useState(current.start_time || "");
-  const [endTime, setEndTime] = useState(current.end_time || "");
+
+  // ▼ 時・分を分離して管理
+  const [startHour, setStartHour] = useState(
+    current.start_time ? current.start_time.split(":")[0] : ""
+  );
+  const [startMin, setStartMin] = useState(
+    current.start_time ? current.start_time.split(":")[1] : ""
+  );
+
+  const [endHour, setEndHour] = useState(
+    current.end_time ? current.end_time.split(":")[0] : ""
+  );
+  const [endMin, setEndMin] = useState(
+    current.end_time ? current.end_time.split(":")[1] : ""
+  );
 
   const dateObj = new Date(date);
   const isSunday = dateObj.getDay() === 0;
@@ -60,14 +65,24 @@ export default function Modal({
     const user = session?.user;
     if (!user) return;
 
+    const start_time =
+      mode === "timeRange" && startHour && startMin
+        ? `${startHour}:${startMin}`
+        : null;
+
+    const end_time =
+      mode === "timeRange" && endHour && endMin
+        ? `${endHour}:${endMin}`
+        : null;
+
     const payload = {
       user_id: user.id,
       date,
       preset,
       note: text,
       color,
-      start_time: mode === "timeRange" ? (startTime || null) : null,
-      end_time: mode === "timeRange" ? (endTime || null) : null,
+      start_time,
+      end_time,
       ...override,
     };
 
@@ -125,8 +140,8 @@ export default function Modal({
         preset,
         note: text,
         color: newColor,
-        start_time: mode === "timeRange" ? (startTime || null) : null,
-        end_time: mode === "timeRange" ? (endTime || null) : null,
+        start_time: null,
+        end_time: null,
       },
     };
 
@@ -159,21 +174,25 @@ export default function Modal({
      時間帯モード → OK で保存
   ----------------------------- */
   const saveTimeRange = async () => {
+    const start_time =
+      startHour && startMin ? `${startHour}:${startMin}` : null;
+    const end_time = endHour && endMin ? `${endHour}:${endMin}` : null;
+
     const newEvents = {
       ...events,
       [date]: {
         preset: "",
         note: text,
         color,
-        start_time: startTime || null,
-        end_time: endTime || null,
+        start_time,
+        end_time,
       },
     };
 
     await saveToSupabase(newEvents, {
       preset: "",
-      start_time: startTime || null,
-      end_time: endTime || null,
+      start_time,
+      end_time,
     });
 
     onClose();
@@ -246,30 +265,56 @@ export default function Modal({
         {mode === "timeRange" && (
           <div className="time-range-block">
             <div className="time-input-row">
-              {/* ▼ 開始時間 */}
+              {/* ▼ 開始：時 */}
               <select
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
+                value={startHour}
+                onChange={(e) => setStartHour(e.target.value)}
               >
                 <option value="">--</option>
-                {TIME_OPTIONS.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {START_HOURS.map((h) => (
+                  <option key={h} value={String(h).padStart(2, "0")}>
+                    {String(h).padStart(2, "0")}
                   </option>
                 ))}
               </select>
 
-              <span>-</span>
-
-              {/* ▼ 終了時間 */}
+              {/* ▼ 開始：分 */}
               <select
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
+                value={startMin}
+                onChange={(e) => setStartMin(e.target.value)}
               >
                 <option value="">--</option>
-                {TIME_OPTIONS.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="time-input-row">
+              {/* ▼ 終了：時 */}
+              <select
+                value={endHour}
+                onChange={(e) => setEndHour(e.target.value)}
+              >
+                <option value="">--</option>
+                {END_HOURS.map((h) => (
+                  <option key={h} value={String(h).padStart(2, "0")}>
+                    {String(h).padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+
+              {/* ▼ 終了：分 */}
+              <select
+                value={endMin}
+                onChange={(e) => setEndMin(e.target.value)}
+              >
+                <option value="">--</option>
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
                   </option>
                 ))}
               </select>
