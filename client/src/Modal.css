@@ -66,7 +66,6 @@
 .confirm-btn {
   background: #90c3fc;
   color: #ffffff;
-  /*border: 1px solid #81c784;*/
   padding: 4px 10px;
   font-size: 12px;
   border-radius: 4px;
@@ -92,20 +91,18 @@
   font-size: 15px;
   border-radius: 6px;
   border: 1px solid #888;
-  background: white; /* ← 塗りつぶしなし */
+  background: white;
   cursor: pointer;
   flex: 1;
   color: #333;
 }
 
-/* 選択されたとき（青枠＋青文字） */
 .preset-btn.active {
   border-color: #0288d1;
   color: #0288d1;
   font-weight: bold;
 }
 
-/* 日曜・祝日は disable */
 .preset-btn:disabled {
   background: #eee;
   cursor: not-allowed;
@@ -156,4 +153,84 @@
   font-size: 11px;
   color: #777;
   text-align: left;
+}
+
+/* ================================
+   ▼ 追加：モード切り替え（早出/遅出 ↔ 時間帯）
+================================ */
+.mode-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 0;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  border-color: #0288d1;
+  color: #0288d1;
+  font-weight: bold;
+}
+
+/* ================================
+   ▼ 追加：時間帯入力
+================================ */
+.time-range-block {
+  margin-bottom: 12px;
+}
+
+.time-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.time-input-row input[type="time"] {
+  flex: 1;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+
+/* ================================
+   ▼ 追加：時間帯登録ボタン + 公休（小さめ）
+================================ */
+.time-range-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.time-range-save-btn {
+  flex: 1;
+  padding: 8px 0;
+  background: #90c3fc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.time-range-save-btn:hover {
+  background: #64b5f6;
+}
+
+.holiday-small {
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background: white;
+  cursor: pointer;
+  white-space: nowrap;
 }

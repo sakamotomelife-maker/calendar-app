@@ -70,6 +70,8 @@ export default function Calendar({ userEmail, onLogout }) {
           preset: ev.preset,
           note: ev.note,
           color: ev.color,
+          start_time: ev.start_time || null,
+          end_time: ev.end_time || null,
         };
       });
 
@@ -116,7 +118,6 @@ export default function Calendar({ userEmail, onLogout }) {
         .maybeSingle();
 
       if (existing) {
-        // ← ここが重要：id で UPDATE する
         await supabase
           .from("common_memo")
           .update({ memo: commonMemo })
@@ -214,7 +215,7 @@ export default function Calendar({ userEmail, onLogout }) {
             month === today.getMonth() &&
             day === today.getDate();
 
-         let cellClass = "cell";
+          let cellClass = "cell";
           if (weekdayIndex === 5) cellClass += " saturday";
           if (weekdayIndex === 6) cellClass += " sunday";
           if (holidayName) cellClass += " holiday";
@@ -228,6 +229,11 @@ export default function Calendar({ userEmail, onLogout }) {
 
           const bgColor = event?.color || "";
 
+          // 時間帯表示（start_time / end_time があれば）
+          const timeRange =
+            event?.start_time && event?.end_time
+              ? `${event.start_time}-${event.end_time}`
+              : null;
 
           return (
             <div
@@ -240,13 +246,19 @@ export default function Calendar({ userEmail, onLogout }) {
 
               {holidayName && (
                 <div className="event preset-公休">
-                  {(holidayName.length > 6
+                  {holidayName.length > 6
                     ? holidayName.slice(0, 6) + "..."
-                    : holidayName)}
+                    : holidayName}
                 </div>
               )}
 
-              {event?.preset && (
+              {timeRange && (
+                <div className="event time-range">
+                  {timeRange}
+                </div>
+              )}
+
+              {event?.preset && !timeRange && (
                 <div className={`event preset-${event.preset}`}>
                   {event.preset}
                 </div>
@@ -271,8 +283,6 @@ export default function Calendar({ userEmail, onLogout }) {
         />
         <div className="memo-hint">※共通メモ欄は自動保存されます</div>
         <div className="version">v1.0.4</div>
-
-
       </div>
 
       {/* モーダル */}

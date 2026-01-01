@@ -134,16 +134,21 @@
   text-overflow: ellipsis;
 }
 
+/* ▼ 追加：時間帯表示（10:00-18:00） */
+.event.time-range {
+  font-size: 11px;
+  color: #333;
+  font-weight: bold;
+  bottom: 1px;
+}
+
+/* メモ表示 */
 .event-note {
   margin-top: 16px;
   font-size: 11px;
   position: relative;
-  white-space: pre-wrap; /* ← 改行をそのまま表示 */
+  white-space: pre-wrap;
   bottom: 18px;
-  /*
-  left: 4px;
-  right: 4px;
-  */
   line-height: 1.2;
 }
 
@@ -170,12 +175,12 @@
   .event,
   .event-note {
     font-size: 12px;
-    .cell {
-    min-height: 100px; /* ← PCだけ大きくする */
-    padding: 6px;      /* ← 余白も少し広げると綺麗 */
-    font-size: 13px;   /* ← 文字も少し大きく */
   }
-}
+  .cell {
+    min-height: 100px;
+    padding: 6px;
+    font-size: 13px;
+  }
 }
 
 /* 共通メモ欄（カレンダーと完全に幅を揃える） */
@@ -201,7 +206,7 @@
   border-radius: 6px;
   border: 1px solid #aaa;
   resize: vertical;
-  min-height: 60px;
+  min-height: 70px;
   box-sizing: border-box;
 }
 
@@ -224,12 +229,10 @@
 /* ============================= */
 @media (max-width: 480px) {
 
-  /* 横スクロール防止 */
   .calendar-wrapper {
     padding: 10px;
   }
 
-  /* セル縮小 */
   .cell {
     min-height: 80px;
     padding: 2px;
@@ -240,7 +243,6 @@
     font-size: 10px;
   }
 
-  /* イベント文字を小さく（スマホ用が確実に勝つ） */
   .event {
     font-size: 9px;
     bottom: 1px;
@@ -248,13 +250,13 @@
     right: 0.5px;
   }
 
-  .event-note {
+  .event.time-range {
+    font-size: 9px;
+  }
 
+  .event-note {
     font-size: 8.5px;
-    margin-top: 14px;
-    /* bottom: 14px;
-    left: 0.5px;
-    right: 0.5px;*/
+    margin-top: 14.5px;
   }
 
   .weekday-cell {
