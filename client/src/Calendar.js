@@ -18,6 +18,19 @@ export default function Calendar({ userEmail, onLogout }) {
   const [holidays, setHolidays] = useState({});
   const [commonMemo, setCommonMemo] = useState("");
 
+  // ▼ 設定モーダル
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // ▼ 登録モード（preset / timeRange）
+  const [registerMode, setRegisterMode] = useState(
+    localStorage.getItem("registerMode") || "preset"
+  );
+
+  const saveRegisterMode = (mode) => {
+    setRegisterMode(mode);
+    localStorage.setItem("registerMode", mode);
+  };
+
   const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
 
   function getCalendarDays(year, month) {
@@ -103,7 +116,7 @@ export default function Calendar({ userEmail, onLogout }) {
   }, []);
 
   /* -----------------------------
-     共通メモ：自動保存（300ms デバウンス）
+     共通メモ：自動保存
   ----------------------------- */
   useEffect(() => {
     const timeout = setTimeout(async () => {
@@ -149,13 +162,34 @@ export default function Calendar({ userEmail, onLogout }) {
     }
   };
 
+  /* -----------------------------
+     時間帯の短縮表示（スマホ用）
+  ----------------------------- */
+  const formatTimeRange = (start, end) => {
+    if (!start || !end) return null;
+
+    const isMobile = window.innerWidth <= 480;
+
+    if (!isMobile) {
+      return `${start}-${end}`;
+    }
+
+    // ▼ スマホ用短縮表示
+    const s = start.replace(":00", "");
+    const e = end.replace(":00", "");
+
+    return `${s}-${e}`;
+  };
+
   return (
     <div className="calendar-wrapper">
       {/* 上部バー */}
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
-        <button className="logout-btn" onClick={handleLogout}>
-          ログアウト
+
+        {/* 設定ボタン */}
+        <button className="logout-btn" onClick={() => setSettingsOpen(true)}>
+          設定
         </button>
       </div>
 
@@ -221,7 +255,6 @@ export default function Calendar({ userEmail, onLogout }) {
           if (holidayName) cellClass += " holiday";
           if (isToday) cellClass += " today";
 
-          // 色が選ばれていないときだけ preset の背景を適用
           if (!event?.color) {
             if (event?.preset === "公休") cellClass += " bg-kokyu";
             if (event?.preset === "遅出") cellClass += " bg-osode";
@@ -229,10 +262,9 @@ export default function Calendar({ userEmail, onLogout }) {
 
           const bgColor = event?.color || "";
 
-          // 時間帯表示（start_time / end_time があれば）
           const timeRange =
             event?.start_time && event?.end_time
-              ? `${event.start_time}-${event.end_time}`
+              ? formatTimeRange(event.start_time, event.end_time)
               : null;
 
           return (
@@ -253,9 +285,7 @@ export default function Calendar({ userEmail, onLogout }) {
               )}
 
               {timeRange && (
-                <div className="event time-range">
-                  {timeRange}
-                </div>
+                <div className="event time-range">{timeRange}</div>
               )}
 
               {event?.preset && !timeRange && (
@@ -282,10 +312,43 @@ export default function Calendar({ userEmail, onLogout }) {
           rows={3}
         />
         <div className="memo-hint">※共通メモ欄は自動保存されます</div>
-        <div className="version">v1.0.4</div>
+        <div className="version">v1.1.1</div>
       </div>
 
-      {/* モーダル */}
+      {/* ▼ 設定モーダル */}
+      {settingsOpen && (
+        <div className="modal-bg" onClick={() => setSettingsOpen(false)}>
+          <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>設定</h3>
+
+            <button
+              className="settings-btn"
+              onClick={() => {
+                saveRegisterMode("timeRange");
+                setSettingsOpen(false);
+              }}
+            >
+              時間帯で登録する
+            </button>
+
+            <button
+              className="settings-btn"
+              onClick={() => {
+                saveRegisterMode("preset");
+                setSettingsOpen(false);
+              }}
+            >
+              早出/遅出で登録する
+            </button>
+
+            <button className="delete-btn-top" onClick={handleLogout}>
+              ログアウト
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ▼ シフト編集モーダル */}
       {selectedDate && (
         <Modal
           date={selectedDate}
@@ -293,6 +356,7 @@ export default function Calendar({ userEmail, onLogout }) {
           setEvents={setEvents}
           holidays={holidays}
           onClose={() => setSelectedDate(null)}
+          mode={registerMode}
         />
       )}
     </div>

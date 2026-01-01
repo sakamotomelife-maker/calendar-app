@@ -7,7 +7,14 @@ const supabase = createClient(
   process.env.REACT_APP_SUPABASE_ANON_KEY
 );
 
-export default function Modal({ date, events, setEvents, holidays, onClose }) {
+export default function Modal({
+  date,
+  events,
+  setEvents,
+  holidays,
+  onClose,
+  mode, // ← preset or timeRange
+}) {
   const current = events[date] || {
     preset: "",
     note: "",
@@ -15,11 +22,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     start_time: null,
     end_time: null,
   };
-
-  // 登録モード（早出/遅出/公休 or 時間帯）
-  const [mode, setMode] = useState(
-    localStorage.getItem("shiftMode") || "preset" // "preset" | "timeRange"
-  );
 
   const [preset, setPreset] = useState(current.preset);
   const [text, setText] = useState(current.note);
@@ -32,15 +34,10 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   const isHoliday = holidays && holidays[date] !== undefined;
   const disabledPreset = isSunday || isHoliday;
 
-  const saveMode = (m) => {
-    setMode(m);
-    localStorage.setItem("shiftMode", m);
-  };
-
   /* -----------------------------
      Supabase 保存処理
   ----------------------------- */
-  const saveToSupabase = async (newEvents, options = {}) => {
+  const saveToSupabase = async (newEvents, override = {}) => {
     setEvents(newEvents);
 
     const session = (await supabase.auth.getSession()).data.session;
@@ -53,9 +50,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       preset,
       note: text,
       color,
-      start_time: startTime || null,
-      end_time: endTime || null,
-      ...options, // 上書きしたいとき用
+      start_time: startTime,
+      end_time: endTime,
+      ...override,
     };
 
     const { data: existing } = await supabase
@@ -79,7 +76,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
     const newPreset = preset === value ? "" : value;
     setPreset(newPreset);
 
-    // 時間帯はクリア
     const newEvents = {
       ...events,
       [date]: {
@@ -96,6 +92,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       start_time: null,
       end_time: null,
     });
+
     onClose();
   };
 
@@ -122,7 +119,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   /* -----------------------------
-     テキスト入力は自動保存（閉じない）
+     テキスト自動保存
   ----------------------------- */
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -143,14 +140,9 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   }, [text]);
 
   /* -----------------------------
-     時間帯登録 → 保存して閉じる
+     時間帯モード → OK で保存
   ----------------------------- */
-  const handleTimeRangeSave = async () => {
-    if (!startTime || !endTime) {
-      alert("開始時間と終了時間を入力してください。");
-      return;
-    }
-
+  const saveTimeRange = async () => {
     const newEvents = {
       ...events,
       [date]: {
@@ -162,8 +154,6 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
       },
     };
 
-    setPreset(""); // preset は空にする（表示は Calendar 側で timeRange を使う）
-
     await saveToSupabase(newEvents, {
       preset: "",
       start_time: startTime,
@@ -174,7 +164,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
   };
 
   /* -----------------------------
-     削除処理
+     削除
   ----------------------------- */
   const remove = async () => {
     if (!window.confirm("予定を削除しますか？")) return;
@@ -204,7 +194,13 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           <h2 className="modal-date">{date}</h2>
 
           <div style={{ display: "flex", gap: "6px" }}>
-            <button className="confirm-btn" onClick={onClose}>
+            <button
+              className="confirm-btn"
+              onClick={() => {
+                if (mode === "timeRange") saveTimeRange();
+                else onClose();
+              }}
+            >
               OK
             </button>
 
@@ -214,41 +210,23 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           </div>
         </div>
 
-        {/* モード切り替え */}
-        <div className="mode-toggle">
-          <button
-            className={`mode-btn ${mode === "preset" ? "active" : ""}`}
-            onClick={() => saveMode("preset")}
-          >
-            早出/遅出で登録
-          </button>
-          <button
-            className={`mode-btn ${mode === "timeRange" ? "active" : ""}`}
-            onClick={() => saveMode("timeRange")}
-          >
-            時間帯で登録
-          </button>
-        </div>
-
-        {/* プリセット or 時間帯 */}
+        {/* ▼ preset モード */}
         {mode === "preset" && (
-          <>
-            {/* プリセット */}
-            <div className="btn-group">
-              {["早出", "遅出", "公休"].map((label) => (
-                <button
-                  key={label}
-                  className={`preset-btn ${preset === label ? "active" : ""}`}
-                  onClick={() => !disabledPreset && togglePreset(label)}
-                  disabled={disabledPreset}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </>
+          <div className="btn-group">
+            {["早出", "遅出", "公休"].map((label) => (
+              <button
+                key={label}
+                className={`preset-btn ${preset === label ? "active" : ""}`}
+                onClick={() => !disabledPreset && togglePreset(label)}
+                disabled={disabledPreset}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         )}
 
+        {/* ▼ 時間帯モード */}
         {mode === "timeRange" && (
           <div className="time-range-block">
             <div className="time-input-row">
@@ -261,27 +239,13 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
               <input
                 type="time"
                 value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
+                                onChange={(e) => setEndTime(e.target.value)}
               />
-            </div>
-
-            <div className="time-range-actions">
-              <button className="time-range-save-btn" onClick={handleTimeRangeSave}>
-                時間帯で登録
-              </button>
-
-              <button
-                className="preset-btn holiday-small"
-                onClick={() => togglePreset("公休")}
-                disabled={disabledPreset}
-              >
-                公休
-              </button>
             </div>
           </div>
         )}
 
-        {/* テキスト */}
+        {/* ▼ テキストエリア（共通） */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -290,7 +254,7 @@ export default function Modal({ date, events, setEvents, holidays, onClose }) {
           />
         </div>
 
-        {/* 色選択 */}
+        {/* ▼ 色選択（共通） */}
         <div className="color-buttons">
           {[
             "#fff9c4",
