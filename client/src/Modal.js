@@ -132,7 +132,7 @@ export default function Modal({
   };
 
   /* -----------------------------
-     色選択 → 即保存して閉じる
+     色選択 → 時刻は消さない
   ----------------------------- */
   const toggleColor = async (value) => {
     const newColor = color === value ? "" : value;
@@ -144,12 +144,17 @@ export default function Modal({
         preset,
         note: text,
         color: newColor,
-        start_time: null,
-        end_time: null,
+        start_time: current.start_time, // ← 時刻保持
+        end_time: current.end_time,     // ← 時刻保持
       },
     };
 
-    await saveToSupabase(newEvents, { color: newColor });
+    await saveToSupabase(newEvents, {
+      color: newColor,
+      start_time: current.start_time,
+      end_time: current.end_time,
+    });
+
     onClose();
   };
 
@@ -211,7 +216,7 @@ export default function Modal({
       });
     };
 
-    // 何も選ばれていない状態（全空）のときも保存して祝日復活させる
+    // 全部空 → 予定削除扱い（祝日復活）
     if (!startHour && !startMin && !endHour && !endMin) {
       const newEvents = {
         ...events,
@@ -266,13 +271,7 @@ export default function Modal({
           <h2 className="modal-date">{date}</h2>
 
           <div style={{ display: "flex", gap: "6px" }}>
-            <button
-              className="confirm-btn"
-              onClick={() => {
-                // OK は閉じるだけ（保存はリアルタイム）
-                onClose();
-              }}
-            >
+            <button className="confirm-btn" onClick={onClose}>
               OK
             </button>
 
