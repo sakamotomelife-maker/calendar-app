@@ -18,10 +18,10 @@ export default function Calendar({ userEmail, onLogout }) {
   const [holidays, setHolidays] = useState({});
   const [commonMemo, setCommonMemo] = useState("");
 
-  // ▼ 設定モーダル
+  // 設定モーダル
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  // ▼ 登録モード（preset / timeRange）
+  // 登録モード
   const [registerMode, setRegisterMode] = useState(
     localStorage.getItem("registerMode") || "preset"
   );
@@ -170,11 +170,8 @@ export default function Calendar({ userEmail, onLogout }) {
 
     const isMobile = window.innerWidth <= 480;
 
-    if (!isMobile) {
-      return `${start}-${end}`;
-    }
+    if (!isMobile) return `${start}-${end}`;
 
-    // ▼ スマホ用短縮表示
     const s = start.replace(":00", "");
     const e = end.replace(":00", "");
 
@@ -183,14 +180,18 @@ export default function Calendar({ userEmail, onLogout }) {
 
   return (
     <div className="calendar-wrapper">
+
+      {/* ▼ 右上固定の設定ボタン */}
+      <button
+        className="settings-fixed-btn"
+        onClick={() => setSettingsOpen(true)}
+      >
+        設定
+      </button>
+
       {/* 上部バー */}
       <div className="calendar-top-bar">
         <span className="user-email">{userEmail}</span>
-
-        {/* 設定ボタン */}
-        <button className="logout-btn" onClick={() => setSettingsOpen(true)}>
-          設定
-        </button>
       </div>
 
       {/* 年月 */}
@@ -312,7 +313,7 @@ export default function Calendar({ userEmail, onLogout }) {
           rows={3}
         />
         <div className="memo-hint">※共通メモ欄は自動保存されます</div>
-        <div className="version">v1.1.1</div>
+        <div className="version">v1.1.0</div>
       </div>
 
       {/* ▼ 設定モーダル */}

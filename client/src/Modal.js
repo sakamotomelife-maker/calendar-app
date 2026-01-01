@@ -7,6 +7,21 @@ const supabase = createClient(
   process.env.REACT_APP_SUPABASE_ANON_KEY
 );
 
+// ▼ 5:00〜23:00 を 15分刻みで生成
+const generateTimeOptions = () => {
+  const times = [];
+  for (let h = 5; h <= 23; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hh = String(h).padStart(2, "0");
+      const mm = String(m).padStart(2, "0");
+      times.push(`${hh}:${mm}`);
+    }
+  }
+  return times;
+};
+
+const TIME_OPTIONS = generateTimeOptions();
+
 export default function Modal({
   date,
   events,
@@ -23,17 +38,21 @@ export default function Modal({
     end_time: null,
   };
 
+  // ▼ 初期値は空白
   const [preset, setPreset] = useState(current.preset);
   const [text, setText] = useState(current.note);
   const [color, setColor] = useState(current.color || "");
-  const [startTime, setStartTime] = useState(current.start_time || "10:00");
-  const [endTime, setEndTime] = useState(current.end_time || "18:00");
+  const [startTime, setStartTime] = useState(current.start_time || "");
+  const [endTime, setEndTime] = useState(current.end_time || "");
 
   const dateObj = new Date(date);
   const isSunday = dateObj.getDay() === 0;
   const isHoliday = holidays && holidays[date] !== undefined;
   const disabledPreset = isSunday || isHoliday;
 
+  /* -----------------------------
+     Supabase 保存処理
+  ----------------------------- */
   const saveToSupabase = async (newEvents, override = {}) => {
     setEvents(newEvents);
 
@@ -47,8 +66,8 @@ export default function Modal({
       preset,
       note: text,
       color,
-      start_time: mode === "timeRange" ? startTime : null,
-      end_time: mode === "timeRange" ? endTime : null,
+      start_time: mode === "timeRange" ? (startTime || null) : null,
+      end_time: mode === "timeRange" ? (endTime || null) : null,
       ...override,
     };
 
@@ -66,6 +85,9 @@ export default function Modal({
     }
   };
 
+  /* -----------------------------
+     プリセット選択 → 保存して閉じる
+  ----------------------------- */
   const togglePreset = async (value) => {
     const newPreset = preset === value ? "" : value;
     setPreset(newPreset);
@@ -90,6 +112,9 @@ export default function Modal({
     onClose();
   };
 
+  /* -----------------------------
+     色選択 → 保存して閉じる
+  ----------------------------- */
   const toggleColor = async (value) => {
     const newColor = color === value ? "" : value;
     setColor(newColor);
@@ -100,8 +125,8 @@ export default function Modal({
         preset,
         note: text,
         color: newColor,
-        start_time: mode === "timeRange" ? startTime : null,
-        end_time: mode === "timeRange" ? endTime : null,
+        start_time: mode === "timeRange" ? (startTime || null) : null,
+        end_time: mode === "timeRange" ? (endTime || null) : null,
       },
     };
 
@@ -109,6 +134,9 @@ export default function Modal({
     onClose();
   };
 
+  /* -----------------------------
+     メモだけ自動保存
+  ----------------------------- */
   useEffect(() => {
     const timeout = setTimeout(() => {
       const newEvents = {
@@ -127,6 +155,9 @@ export default function Modal({
     return () => clearTimeout(timeout);
   }, [text]);
 
+  /* -----------------------------
+     時間帯モード → OK で保存
+  ----------------------------- */
   const saveTimeRange = async () => {
     const newEvents = {
       ...events,
@@ -134,20 +165,23 @@ export default function Modal({
         preset: "",
         note: text,
         color,
-        start_time: startTime,
-        end_time: endTime,
+        start_time: startTime || null,
+        end_time: endTime || null,
       },
     };
 
     await saveToSupabase(newEvents, {
       preset: "",
-      start_time: startTime,
-      end_time: endTime,
+      start_time: startTime || null,
+      end_time: endTime || null,
     });
 
     onClose();
   };
 
+  /* -----------------------------
+     削除
+  ----------------------------- */
   const remove = async () => {
     if (!window.confirm("予定を削除しますか？")) return;
 
@@ -171,8 +205,10 @@ export default function Modal({
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
+        {/* ヘッダー */}
         <div className="modal-header">
           <h2 className="modal-date">{date}</h2>
+
           <div style={{ display: "flex", gap: "6px" }}>
             <button
               className="confirm-btn"
@@ -183,12 +219,14 @@ export default function Modal({
             >
               OK
             </button>
+
             <button className="delete-btn-top" onClick={remove}>
               削除
             </button>
           </div>
         </div>
 
+        {/* ▼ preset モード */}
         {mode === "preset" && (
           <div className="btn-group">
             {["早出", "遅出", "公休"].map((label) => (
@@ -204,24 +242,42 @@ export default function Modal({
           </div>
         )}
 
+        {/* ▼ 時間帯モード */}
         {mode === "timeRange" && (
           <div className="time-range-block">
             <div className="time-input-row">
-              <input
-                type="time"
+              {/* ▼ 開始時間 */}
+              <select
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-              />
+              >
+                <option value="">--</option>
+                {TIME_OPTIONS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+
               <span>-</span>
-              <input
-                type="time"
+
+              {/* ▼ 終了時間 */}
+              <select
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-              />
+              >
+                <option value="">--</option>
+                {TIME_OPTIONS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}
 
+        {/* ▼ メモ */}
         <div className="text-area-wrapper">
           <textarea
             value={text}
@@ -230,6 +286,7 @@ export default function Modal({
           />
         </div>
 
+        {/* ▼ 色選択 */}
         <div className="color-buttons">
           {[
             "#fff9c4",
