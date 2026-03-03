@@ -9,7 +9,7 @@ Javascript初心者がCopilotをフル活用してつくったReact+Vercel+Supab
 - 早出、遅出、公休のシンプルな構成で、その下にメモを残す仕様
   ![画面例](docs/screenshot3.png)
 - 設定から時間シフト制（例：10-17）などの登録も可能
-    ![画面例](docs/screenshot3.png)
+    ![画面例](docs/screenshot4.png)
 - 祝日は自動で取得し、祝日名も表示
 
 ## 技術ポイント
@@ -18,6 +18,6 @@ Javascript初心者がCopilotをフル活用してつくったReact+Vercel+Supab
 - ログイン画面の実装によって個人別の予定を表示
     ![画面例](docs/screenshot1.png)
 
-## 今後のアップデート
+## 今後の展望
 - アレクサ連携で予定の通知
 - LINEで予定の通知
