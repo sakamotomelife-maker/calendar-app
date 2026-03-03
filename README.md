@@ -1,6 +1,8 @@
 # 年末年始につくったcalendar-app
 ![画面例](docs/screenshot2.png)
 
+- 公開リンク：https://calendar-app-ten-steel.vercel.app/
+
 ## 概要
 Javascript初心者がCopilotをフル活用してつくったReact+Vercel+Supabaseのフルスタックアプリです。
 時間帯指定などをせず、手帳に手書きをするような、手間がないシンプルなカレンダーアプリです。
